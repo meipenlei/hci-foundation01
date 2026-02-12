@@ -1,0 +1,23 @@
+{
+  "name": "CAF-Sec-Baseline-MS",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "description": "Requires that prerequisites are deployed to the policy assignment scope. For details, visit https://aka.ms/gcpol. Machines are non-compliant if the machine is not configured correctly for one of the recommendations in the Azure compute security baseline.",
+    "displayName": "(Preview) Windows machines should meet requirements for the Azure compute security baseline",
+    "definitionVersion": "2.*.*-preview",
+    "notScopes": [],
+    "parameters": {
+      "IncludeArcMachines": {
+        "value": "true"
+      }
+    },
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/be7a78aa-3e10-4153-a5fd-8c6506dbc821",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": null
+  },
+  "location": "${default_location}",
+  "identity": {
+    "type": "None"
+  }
+}

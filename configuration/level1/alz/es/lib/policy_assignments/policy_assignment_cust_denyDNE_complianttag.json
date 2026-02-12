@@ -1,0 +1,28 @@
+{
+  "name": "CAF-Deny-CompliantTag",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2019-09-01",
+  "properties": {
+    "description": "This policy initiative is a group of policies that prevents creation of Azure Resources without the compliant tags",
+    "displayName": "Compliant tags should be set for all resources",
+    "notScopes": [],
+    "parameters": {
+      "compliantTag01": {
+        "value": "solution_topic"
+      },
+      "compliantTag02": {
+        "value": "cost_center"
+      },
+      "compliantTag03": {
+        "value": "cost_responsible"
+      }
+    },
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/CAF-Deny-CompliantTag",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": "DoNotEnforce"
+  },
+  "location": "${default_location}",
+  "identity": {
+    "type": "None"
+  }
+}

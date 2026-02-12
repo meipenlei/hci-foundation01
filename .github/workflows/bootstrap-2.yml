@@ -1,0 +1,407 @@
+name: Bootstrap-part2
+run-name: "${{ github.workflow }}(${{ inputs.terraformAction }})"
+
+on:
+    workflow_dispatch:
+        inputs:
+            timeoutInMinutes:
+                description: 'Timeout in minutes'
+                required: true
+                type: number
+                default: 90
+            parallelism:
+                description: 'Terraform parallelism'
+                required: false
+                type: number
+                default: 30
+            terraformAction:
+                description: "Terraform 'apply' or 'destroy'?"
+                type: choice
+                required: true
+                options:
+                    - 'apply'
+                    - 'destroy'
+            environment:
+                description: 'Environment Name'
+                type: choice
+                required: true
+                default: 'ph_environment'     
+                options:
+                    - DEV
+                    - TEST
+                    - PROD           
+            ROVER_IMAGE:
+                description: 'Image for Rover'
+                type: string
+                required: true
+                default: 'ph_rover_version'
+            roverDebug:
+                description: 'Rover debug log?'
+                type: boolean
+                required: true
+                default: false
+            isPrivateImage:
+                description: 'Is the image private?'
+                type: boolean
+                required: true
+                default: false
+
+permissions:
+  id-token: write
+  contents: read
+  packages: read
+
+env:
+    ROVER_DEBUG: ${{ inputs.roverDebug == true && '-log-severity DEBUG' || '' }} # not used
+    TERRAFORM_ACTION: ${{ inputs.terraformAction == 'apply' && 'plan' || inputs.terraformAction == 'destroy' && 'plan -destroy'  }}
+
+jobs:
+    runner_init_validation_private:
+        if: ${{ inputs.isPrivateImage }}
+        runs-on: ubuntu-latest
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.PAT_GITHUB_RUNNER }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+                - TF_PLUGIN_CACHE_DIR="/tf/caf/.terraform.cache"
+                - TF_DATA_DIR="/tf/caf/.terraform.cache"
+
+        environment: 
+            name: credentials
+
+        env:
+            landing_zone_path: 'landingzones/caf_solution'
+            landing_zone_config: 'configuration/level0/agent/runner_init'
+            landing_zone_tfstate: 'runner_level0'
+
+        steps: 
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
+
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}             
+
+            - name: Replace PAT on the fly
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars 
+
+            - name: Rover plan
+              run: |            
+                echo "------------- Configure Terraform Environment variables -------------"
+                export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}    
+                export ARM_USE_CLI=false
+                export ARM_USE_OIDC=true                
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                echo "------------- input values for rover -------------"
+                echo "landing_zone_path    = ${{env.landing_zone_path}}"
+                echo "landing_zone_config  = ${{env.landing_zone_config}}"
+                echo "landing_zone_tfstate = ${{env.landing_zone_tfstate}}"
+                echo "environment          = ${{inputs.environment}}"
+                echo "timeoutInMinutes     = ${{inputs.timeoutInMinutes}}"
+                echo "TERRAFORM_ACTION     = ${{env.TERRAFORM_ACTION}}"
+                echo "ROVER_DEBUG          = ${{env.ROVER_DEBUG}}"
+                
+                echo "------------- Execute Rover plan -------------"
+                /tf/rover/rover.sh \
+                  -lz /tf/caf/${{env.landing_zone_path}} \
+                  -var-folder /tf/caf/${{env.landing_zone_config}} \
+                  -tfstate ${{env.landing_zone_tfstate}}.tfstate \
+                  -env ${{inputs.environment}} \
+                  -level 'level0' \
+                  -parallelism=${{inputs.parallelism}} \
+                  -p /tf/caf/${{env.landing_zone_tfstate}}.tfplan \
+                  -a  ${{env.TERRAFORM_ACTION}} ${{env.ROVER_DEBUG}}
+
+            - name: Publish Terraform Plan
+              uses: actions/upload-artifact@v4.4.3
+              with:
+                  name: tfstate
+                  path: /tf/caf/${{env.landing_zone_tfstate}}.tfplan
+
+    runner_init_validation_public:
+        if: ${{ !inputs.isPrivateImage }}
+        runs-on: ubuntu-latest
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+                - TF_PLUGIN_CACHE_DIR="/tf/caf/.terraform.cache"
+                - TF_DATA_DIR="/tf/caf/.terraform.cache"
+
+        environment: 
+            name: credentials
+
+        env:
+            landing_zone_path: 'landingzones/caf_solution'
+            landing_zone_config: 'configuration/level0/agent/runner_init'
+            landing_zone_tfstate: 'runner_level0'
+
+        steps: 
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
+
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}             
+
+            - name: Replace PAT on the fly
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars 
+
+            - name: Rover plan
+              run: |            
+                echo "------------- Configure Terraform Environment variables -------------"
+                export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}    
+                export ARM_USE_CLI=false
+                export ARM_USE_OIDC=true                
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                echo "------------- input values for rover -------------"
+                echo "landing_zone_path    = ${{env.landing_zone_path}}"
+                echo "landing_zone_config  = ${{env.landing_zone_config}}"
+                echo "landing_zone_tfstate = ${{env.landing_zone_tfstate}}"
+                echo "environment          = ${{inputs.environment}}"
+                echo "timeoutInMinutes     = ${{inputs.timeoutInMinutes}}"
+                echo "TERRAFORM_ACTION     = ${{env.TERRAFORM_ACTION}}"
+                echo "ROVER_DEBUG          = ${{env.ROVER_DEBUG}}"
+                
+                echo "------------- Execute Rover plan -------------"
+                /tf/rover/rover.sh \
+                  -lz /tf/caf/${{env.landing_zone_path}} \
+                  -var-folder /tf/caf/${{env.landing_zone_config}} \
+                  -tfstate ${{env.landing_zone_tfstate}}.tfstate \
+                  -env ${{inputs.environment}} \
+                  -level 'level0' \
+                  -parallelism=${{inputs.parallelism}} \
+                  -p /tf/caf/${{env.landing_zone_tfstate}}.tfplan \
+                  -a  ${{env.TERRAFORM_ACTION}} ${{env.ROVER_DEBUG}}
+
+            - name: Publish Terraform Plan
+              uses: actions/upload-artifact@v4.4.3
+              with:
+                  name: tfstate
+                  path: /tf/caf/${{env.landing_zone_tfstate}}.tfplan                    
+
+    approval-runner-init:
+      runs-on: ubuntu-latest
+      needs: [runner_init_validation_private, runner_init_validation_public]
+      if: ${{ always() && (needs.runner_init_validation_private.result == 'success' || needs.runner_init_validation_public.result == 'success') }}
+      environment:
+          name: ${{ inputs.environment }}
+      steps:
+          - name: Only one step
+            run: echo "Only one step"            
+
+    runner_init_deployment_private:
+        if: ${{ always() && inputs.isPrivateImage && needs.approval-runner-init.result == 'success' }}
+        needs: [approval-runner-init]
+        runs-on: ubuntu-latest
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.PAT_GITHUB_RUNNER }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        environment: 
+            name: credentials
+
+        env:
+            landing_zone_path: 'landingzones/caf_solution'
+            landing_zone_config: 'configuration/level0/agent/runner_init'
+            landing_zone_tfstate: 'runner_level0'
+
+        steps: 
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
+
+            - name: Download Terraform Plan
+              uses: actions/download-artifact@v4.1.8              
+              with:
+                  name: tfstate
+
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}             
+
+            - name: Replace PAT on the fly
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars 
+
+
+            - name: Rover apply
+              run: |            
+                echo "------------- Configure Terraform Environment variables -------------"
+                export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}    
+                export ARM_USE_CLI=false
+                export ARM_USE_OIDC=true                
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                echo "------------- input values for rover -------------"
+                echo "landing_zone_path    = ${{env.landing_zone_path}}"
+                echo "landing_zone_config  = ${{env.landing_zone_config}}"
+                echo "landing_zone_tfstate = ${{env.landing_zone_tfstate}}"
+                echo "environment          = ${{inputs.environment}}"
+                echo "timeoutInMinutes     = ${{inputs.timeoutInMinutes}}"
+                echo "TERRAFORM_ACTION     = ${{env.TERRAFORM_ACTION}}"
+                echo "ROVER_DEBUG          = ${{env.ROVER_DEBUG}}"
+                
+                echo "------------- Execute Rover apply -------------"
+                /tf/rover/rover.sh \
+                  -lz /tf/caf/${{env.landing_zone_path}} \
+                  -var-folder /tf/caf/${{env.landing_zone_config}} \
+                  -tfstate ${{env.landing_zone_tfstate}}.tfstate \
+                  -env ${{inputs.environment}} \
+                  -level 'level0' \
+                  -parallelism=${{inputs.parallelism}} \
+                  -p /tf/caf/${{env.landing_zone_tfstate}}.tfplan \
+                  -var var_folder_path=${{env.landing_zone_config}} \
+                  -a  apply  ${{env.ROVER_DEBUG}}
+
+                  sleep 30
+
+                  if [ "${{ inputs.terraformAction }}" = "apply" ]; then
+                    echo "To activate termination event notification for automatic deregister the self-hosted github runner"
+                    az vmss update --resource-group ${{ vars.PREFIX }}-rg-self-hosted-level0 --name runner-level0 --enable-terminate-notification true --terminate-notification-time 5
+                  fi
+
+    runner_init_deployment_public:
+        if: ${{ always() && !inputs.isPrivateImage && needs.approval-runner-init.result == 'success' }}
+        needs: [approval-runner-init]
+        runs-on: ubuntu-latest
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        environment: 
+            name: credentials
+
+        env:
+            landing_zone_path: 'landingzones/caf_solution'
+            landing_zone_config: 'configuration/level0/agent/runner_init'
+            landing_zone_tfstate: 'runner_level0'
+
+        steps: 
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
+
+            - name: Download Terraform Plan
+              uses: actions/download-artifact@v4.1.8              
+              with:
+                  name: tfstate
+
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}             
+
+            - name: Replace PAT on the fly
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars 
+
+
+            - name: Rover apply
+              run: |            
+                echo "------------- Configure Terraform Environment variables -------------"
+                export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}    
+                export ARM_USE_CLI=false
+                export ARM_USE_OIDC=true                
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                echo "------------- input values for rover -------------"
+                echo "landing_zone_path    = ${{env.landing_zone_path}}"
+                echo "landing_zone_config  = ${{env.landing_zone_config}}"
+                echo "landing_zone_tfstate = ${{env.landing_zone_tfstate}}"
+                echo "environment          = ${{inputs.environment}}"
+                echo "timeoutInMinutes     = ${{inputs.timeoutInMinutes}}"
+                echo "TERRAFORM_ACTION     = ${{env.TERRAFORM_ACTION}}"
+                echo "ROVER_DEBUG          = ${{env.ROVER_DEBUG}}"
+                
+                echo "------------- Execute Rover apply -------------"
+                /tf/rover/rover.sh \
+                  -lz /tf/caf/${{env.landing_zone_path}} \
+                  -var-folder /tf/caf/${{env.landing_zone_config}} \
+                  -tfstate ${{env.landing_zone_tfstate}}.tfstate \
+                  -env ${{inputs.environment}} \
+                  -level 'level0' \
+                  -parallelism=${{inputs.parallelism}} \
+                  -p /tf/caf/${{env.landing_zone_tfstate}}.tfplan \
+                  -var var_folder_path=${{env.landing_zone_config}} \
+                  -a  apply  ${{env.ROVER_DEBUG}}
+
+                  sleep 30
+
+                  if [ "${{ inputs.terraformAction }}" = "apply" ]; then
+                    echo "To activate termination event notification for automatic deregister the self-hosted github runner"
+                    az vmss update --resource-group ${{ vars.PREFIX }}-rg-self-hosted-level0 --name runner-level0 --enable-terminate-notification true --terminate-notification-time 5
+                  fi

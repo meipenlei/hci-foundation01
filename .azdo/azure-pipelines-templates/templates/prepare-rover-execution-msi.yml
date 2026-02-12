@@ -1,0 +1,22 @@
+# File: prepare-rover-execution-msi.yml
+
+steps:
+- bash: |
+    # Login with MSI
+    az login --identity --resource-id $(MSI_RESOURCE_ID)
+    
+    # Alternative Login with service principal - Must be setup in variable group first!
+    # az login --service-principal -u '$(ARM_CLIENT_ID)' -p '$(ARM_CLIENT_SECRET)' --tenant '$(ARM_TENANT_ID)'
+  displayName: 'Login to Azure'
+- bash: |
+    # Link configuration to /tf/caf because we have a hard coded absolute path in enterprise_scale.tfvars
+    sudo ln -s $(Build.Repository.LocalPath)/configuration /tf/caf/configuration
+  displayName: 'Link configuration to /tf/caf'
+- bash: |
+    # Link .devcontainer to /tf/caf because we want rover to check if local and pipeline versions are matching
+    sudo ln -s $(Build.Repository.LocalPath)/.devcontainer /tf/caf/.devcontainer
+  displayName: 'Link .devcontainer to /tf/caf'
+- bash: |
+    # chmod /tf/cache because we want to provide access to the terraform cache
+    sudo chmod -R 777 /tf/cache
+  displayName: 'chmod -R 777 /tf/cache'

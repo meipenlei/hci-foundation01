@@ -1,0 +1,47 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "name": "CAF-Depl-MDFC-DefSQL-AMA",
+  "location": "${default_location}",
+  "dependsOn": [],
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "description": "Microsoft Defender for SQL collects events from the agents and uses them to provide security alerts and tailored hardening tasks (recommendations).",
+    "displayName": "Enable Defender for SQL on SQL VMs and Arc-enabled SQL Servers",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/de01d381-bae9-4670-8870-786f89f49e26",
+    "definitionVersion": "1.*.*",
+    "enforcementMode": "Default",
+    "nonComplianceMessages": [
+      {
+        "message": "Microsoft Defender for SQL {enforcementMode} be deployed."
+      }
+    ],
+    "parameters": {
+      "workspaceRegion": {
+        "value": "${default_location}"
+      },
+      "userWorkspaceResourceId": {
+        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/ph_prefix-log-logre1"
+      },
+      "bringYourOwnDcr": {
+        "value": true
+      },
+      "dcrResourceId": {
+        "value": "${azure_monitor_data_collection_rule_sql_resource_id}"
+      },
+      "enableCollectionOfSqlQueriesForSecurityResearch": {
+        "value": false
+      },
+      "bringYourOwnUserAssignedManagedIdentity": {
+        "value": true
+      },
+      "userAssignedIdentityResourceId": {
+        "value": "ph_MON_MSI_RESOURCE_ID"
+      }
+    },
+    "scope": "${current_scope_resource_id}",
+    "notScopes": []
+  }
+}

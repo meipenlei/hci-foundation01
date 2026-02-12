@@ -1,0 +1,136 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "Enforce-GR-Network0",
+  "location": "${default_location}",
+  "dependsOn": [],
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "description": "This initiative assignment enables additional ALZ guardrails for Network and Networking services.",
+    "displayName": "Enforce recommended guardrails for Network and Networking services",
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-Network",
+    "enforcementMode": "DoNotEnforce",
+    "parameters": {
+      "ddosPlanResourceId": {
+        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.Network/ddosProtectionPlans/ph_prefix-ddos"
+      },
+      "subnetUdr": {
+        "value": "Audit"
+      },
+      "subnetNsg": {
+        "value": "Audit"
+      },
+      "subnetServiceEndpoint": {
+        "value": "Audit"
+      },
+      "appGwWaf": {
+        "value": "Audit"
+      },
+      "vnetModifyDdos": {
+        "value": "Disabled"
+      },
+      "wafMode": {
+        "value": "Audit"
+      },
+      "wafModeRequirement": {
+        "value": "Prevention"
+      },
+      "wafFwRules": {
+        "value": "Audit"
+      },
+      "wafModeAppGw": {
+        "value": "Audit"
+      },
+      "wafModeAppGwRequirement": {
+        "value": "Prevention"
+      },
+      "denyMgmtFromInternet": {
+        "value": "Audit"
+      },
+      "denyMgmtFromInternetPorts": {
+        "value": [
+          "22",
+          "3389"
+        ]
+      },
+      "afwEnbaleTlsForAllAppRules": {
+        "value": "Audit"
+      },
+      "afwEnableTlsInspection": {
+        "value": "Audit"
+      },
+      "afwEmptyIDPSBypassList": {
+        "value": "Audit"
+      },
+      "afwEnableAllIDPSSignatureRules": {
+        "value": "Audit"
+      },
+      "afwEnableIDPS": {
+        "value": "Audit"
+      },
+      "wafAfdEnabled": {
+        "value": "Audit"
+      },
+      "vpnAzureAD": {
+        "value": "Audit"
+      },
+      "appGwTlsVersion": {
+        "value": "Audit"
+      },
+      "modifyUdr": {
+        "value": "Disabled"
+      },
+      "modifyUdrNextHopIpAddress": {
+        "value": ""
+      },
+      "modifyUdrNextHopType": {
+        "value": "None"
+      },
+      "modifyUdrAddressPrefix": {
+        "value": "0.0.0.0/0"
+      },
+      "modifyNsg": {
+        "value": "Disabled"
+      },
+      "modifyNsgRuleName": {
+        "value": "DenyAnyInternetOutbound"
+      },
+      "modifyNsgRulePriority": {
+        "value": 1000
+      },
+      "modifyNsgRuleDirection": {
+        "value": "Outbound"
+      },
+      "modifyNsgRuleAccess": {
+        "value": "Deny"
+      },
+      "modifyNsgRuleProtocol": {
+        "value": "*"
+      },
+      "modifyNsgRuleSourceAddressPrefix": {
+        "value": "*"
+      },
+      "modifyNsgRuleSourcePortRange": {
+        "value": "*"
+      },
+      "modifyNsgRuleDestinationAddressPrefix": {
+        "value": "Internet"
+      },
+      "modifyNsgRuleDestinationPortRange": {
+        "value": "*"
+      },
+      "modifyNsgRuleDescription": {
+        "value": "Deny any outbound traffic to the Internet"
+      }
+    },
+    "nonComplianceMessages": [
+      {
+        "message": "Recommended guardrails {enforcementMode} be enforced for Network and Networking services."
+      }
+    ],
+    "scope": "${current_scope_resource_id}",
+    "notScopes": []
+  }
+}

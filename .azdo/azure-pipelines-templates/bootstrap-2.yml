@@ -1,0 +1,71 @@
+name: Bootstrap-Part2
+
+trigger: none
+
+parameters:
+  - name: timeoutInMinutes
+    displayName: 'Timeout in minutes'
+    type: number
+    default: 60
+
+  - name: terraformAction
+    displayName: Terraform 'apply' or 'destroy'?
+    values:
+      - plan
+      - destroy
+
+  - name: roverDebug
+    displayName: Rover Debug Log?
+    type: boolean
+    default: false
+
+  - name: environment
+    displayName: Environment Name
+    type: string
+    default: ph_environment
+
+  - name: wlf_service_connection
+    displayName: Workload Federation Service Connection Name
+    type: string
+    default: msi-bootstrap
+
+  - name: ROVER_IMAGE
+    displayName: Image for Rover
+    type: string
+    default: ph_rover_version
+
+variables:
+  - group: LandingZoneRepo
+  - name: terraformAction
+    ${{ if eq(parameters.terraformAction, 'plan') }}:
+      value: 'plan'
+    ${{ elseif eq(parameters.terraformAction, 'destroy') }}:
+      value: 'plan -destroy'
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')] # runtime expression
+  - name: TF_DATA_DIR
+    value: /tf/caf/.terraform.cache
+
+resources:
+  containers:
+  - container: rover
+    image: ${{ parameters.ROVER_IMAGE }}
+    options: --user 0:0 -e TF_PLUGIN_CACHE_DIR="/tf/caf/.terraform.cache" -e TF_DATA_DIR="/tf/caf/.terraform.cache"
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+# 3. Step Agent (Level 0)
+- template: templates/rover-execution.yml
+  parameters:
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    terraformAction: ${{ parameters.terraformAction }}
+    environment: ${{ parameters.environment }}
+    level: level0
+    landing_zone_tfstate: agent_level0
+    landing_zone_path: landingzones/caf_solution/add-ons/managed_agent
+    landing_zone_config: configuration/level0/agent/azdo_mdp
+    launchpad: false
+    wlf_service_connection: ${{ parameters.wlf_service_connection }}
+    roverDebug: ${{ parameters.roverDebug }}

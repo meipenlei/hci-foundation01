@@ -1,0 +1,22 @@
+# File: prepare-rover-execution.yml
+
+steps:
+- bash: |
+    # Clone the landingzone repository - modify the GIT URL to your Repository
+    if [ ! -d $(Build.Repository.LocalPath)/landingzones ]; then
+    git -c advice.detachedHead=false clone $(GIT_CLONE_OPTIONS) $(Build.Repository.LocalPath)/landingzones
+    fi
+  displayName: 'Clone landingzone repository'
+- bash: |
+    # Link configuration to /tf/caf because we have a hard coded absolute path in enterprise_scale.tfvars
+    sudo ln -s $(Build.Repository.LocalPath)/configuration /tf/caf/configuration
+  displayName: 'Link configuration to /tf/caf'
+- bash: |
+    # Link .devcontainer to /tf/caf because we want rover to check if local and pipeline versions are matching
+    sudo ln -s $(Build.Repository.LocalPath)/.devcontainer /tf/caf/.devcontainer
+  displayName: 'Link .devcontainer to /tf/caf'
+- bash: |
+    # chmod /tf/cache because we want to provide access to the terraform cache
+    sudo chmod -R 777 /tf/cache
+  displayName: 'chmod -R 777 /tf/cache'
+    

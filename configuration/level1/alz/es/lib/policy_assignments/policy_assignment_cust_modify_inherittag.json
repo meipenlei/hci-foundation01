@@ -1,0 +1,28 @@
+{
+  "name": "CAF-Modify-InheritTag",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2019-09-01",
+  "properties": {
+    "description": "This policy initiative is a group of policies that makes sure that all resources are tagged according to their resource group",
+    "displayName": "Tags should be inherited from their resource groups",
+    "notScopes": [],
+    "parameters": {
+      "compliantTag01": {
+        "value": "solution_topic"
+      },
+      "compliantTag02": {
+        "value": "cost_center"
+      },
+      "compliantTag03": {
+        "value": "cost_responsible"
+      }
+    },
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/CAF-Modify-InheritTag",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": "Default"
+  },
+  "location": "${default_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  }
+}

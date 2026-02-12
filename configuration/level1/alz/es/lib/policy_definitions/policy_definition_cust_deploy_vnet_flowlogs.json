@@ -1,0 +1,247 @@
+{
+  "name": "CAF-Deploy-VNet-FlowLogs",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "scope": null,
+  "properties": {
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "metadata": {
+      "category": "Monitoring",
+      "version": "1.0.0"
+    },
+    "displayName": "CAF - Enable VNet flowlogs and traffic analytics.",
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      },
+      "vnetRegion": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Virtual Network Region",
+          "description": "Configures for virtual network in the selected region only.",
+          "strongType": "location"
+        }
+      },
+      "flowAnalyticsEnabled": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Enable Traffic Analytics",
+          "description": "Enable Traffic Analytics"
+        },
+        "defaultValue": "false"
+      },
+      "interval": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Traffic Analytics processing interval mins (10/60)",
+          "description": "Traffic Analytics processing interval mins (10/60)"
+        },
+        "defaultValue": "60"
+      },
+      "retention": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Retention days in storage account. If you want to retain data forever and do not want to apply any retention policy, set retention (days) to 0.",
+          "description": "Retention days in storage account. If you want to retain data forever and do not want to apply any retention policy, set retention (days) to 0."
+        },
+        "defaultValue": "2"
+      },
+      "logAnalytics": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Workspace Resource ID",
+          "description": "Log Analytics workspace resource id",
+          "assignPermissions": true,
+          "strongType": "Microsoft.OperationalInsights/workspaces"
+        },
+        "defaultValue": ""
+      },
+      "storageAccountResourceId": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Storage Account",
+          "description": "The resource id of storage account where flowlogs will be sent to. It will be used for deployment purposes only. Make sure this storage account is located in the same region as the Vnet.",
+          "assignPermissions": true,
+          "strongType": "Microsoft.Storage/storageAccounts"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "equals": "Microsoft.Network/virtualNetworks",
+            "field": "type"
+          },
+          {
+            "field": "location",
+            "equals": "[parameters('vnetRegion')]"
+          }
+        ]
+      },
+      "then": {
+        "details": {
+          "deployment": {
+            "properties": {
+              "mode": "Incremental",
+              "parameters": {
+                "flowAnalyticsEnabled": {
+                  "value": "[bool(parameters('flowAnalyticsEnabled'))]"
+                },
+                "interval": {
+                  "value": "[int(parameters('interval'))]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                },
+                "targetResourceId": {
+                  "value": "[field('id')]"
+                },
+                "retention": {
+                  "value": "[int(parameters('retention'))]"
+                },
+                "storageAccountResourceId": {
+                  "value": "[parameters('storageAccountResourceId')]"
+                },
+                "logAnalytics": {
+                  "value": "[parameters('logAnalytics')]"
+                }
+              },
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "location": "[parameters('location')]",
+                "outputs": {},
+                "parameters": {
+                  "flowAnalyticsEnabled": {
+                    "type": "bool"
+                  },
+                  "interval": {
+                    "type": "int"
+                  },
+                  "location": {
+                    "type": "String"
+                  },
+                  "targetResourceId": {
+                    "type": "String"
+                  },
+                  "retention": {
+                    "type": "int"
+                  },
+                  "storageAccountResourceId": {
+                    "type": "String"
+                  },
+                  "time": {
+                    "defaultValue": "[utcNow()]",
+                    "type": "String"
+                  },
+                  "logAnalytics": {
+                    "type": "String"
+                  }
+                },
+                "variables": {
+                  "VNetName": "[split(parameters('targetResourceId'), '/')[8]]",
+                  "flowlogName": "[concat(take(concat(split(parameters('targetResourceId'), '/')[8], '-', split(parameters('targetResourceId'), '/')[4], '-', split(parameters('targetResourceId'), '/')[2]), 72), '-flowlog')]"
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2024-03-01",
+                    "resourceGroup": "NetworkWatcherRG",
+                    "name": "[take(concat('NetworkWatcherRG', '.', uniqueString(variables('VNetName'))), 64)]",
+                    "properties": {
+                      "mode": "Incremental",
+                      "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "resources": [
+                          {
+                            "type": "Microsoft.Network/networkWatchers",
+                            "apiVersion": "2023-11-01",
+                            "name": "[concat('NetworkWatcher_', toLower(parameters('location')))]",
+                            "location": "[parameters('location')]",
+                            "properties": {},
+                            "resources": [
+                              {
+                                "type": "flowLogs",
+                                "apiVersion": "2023-09-01",
+                                "dependsOn": [
+                                  "[concat('NetworkWatcher_', toLower(parameters('location')))]"
+                                ],
+                                "name": "[variables('flowlogName')]",
+                                "location": "[parameters('location')]",
+                                "properties": {
+                                  "enabled": true,
+                                  "flowAnalyticsConfiguration": {
+                                    "networkWatcherFlowAnalyticsConfiguration": {
+                                      "enabled": "[bool(parameters('flowAnalyticsEnabled'))]",
+                                      "trafficAnalyticsInterval": "[parameters('interval')]",
+                                      "workspaceResourceId": "[parameters('logAnalytics')]"
+                                    }
+                                  },
+                                  "format": {
+                                    "type": "JSON",
+                                    "version": 2
+                                  },
+                                  "retentionPolicy": {
+                                    "days": "[parameters('retention')]",
+                                    "enabled": true
+                                  },
+                                  "storageId": "[parameters('storageAccountResourceId')]",
+                                  "targetResourceId": "[parameters('targetResourceId')]"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "existenceCondition": {
+            "allof": [
+              {
+                "field": "Microsoft.Network/networkWatchers/flowLogs/enabled",
+                "equals": "true"
+              },
+              {
+                "field": "Microsoft.Network/networkWatchers/flowLogs/flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.enabled",
+                "equals": "[bool(parameters('flowAnalyticsEnabled'))]"
+              },
+              {
+                "field": "Microsoft.Network/networkWatchers/flowLogs/flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.trafficAnalyticsInterval",
+                "equals": "[parameters('interval')]"
+              },
+              {
+                "field": "Microsoft.Network/networkWatchers/flowLogs/retentionPolicy.days",
+                "equals": "[parameters('retention')]"
+              }
+            ]
+          },
+          "resourceGroupName": "[if(empty(coalesce(field('Microsoft.Network/virtualNetworks/flowLogs'))), 'NetworkWatcherRG', split(first(field('Microsoft.Network/virtualNetworks/flowLogs[*].id')), '/')[4])]",
+          "name": "[if(empty(coalesce(field('Microsoft.Network/virtualNetworks/flowLogs[*].id'))), 'null/null', concat(split(first(field('Microsoft.Network/virtualNetworks/flowLogs[*].id')), '/')[8], '/', split(first(field('Microsoft.Network/virtualNetworks/flowLogs[*].id')), '/')[10]))]",
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7",
+            "/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293",
+            "/providers/Microsoft.Authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa"
+          ],
+          "type": "Microsoft.Network/networkWatchers/flowLogs"
+        },
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}

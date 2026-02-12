@@ -1,0 +1,79 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "CAF-Deploy-MDFC-Config",
+  "location": "${default_location}",
+  "dependsOn": [],
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "description": "Deploy Microsoft Defender for Cloud and Security Contacts",
+    "displayName": "Deploy Microsoft Defender for Cloud configuration (Customized)",
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/Deploy-MDFC-Config_20240319",
+    "enforcementMode": "Default",
+    "nonComplianceMessages": [
+      {
+        "message": "Microsoft Defender for Cloud and Security Contacts {enforcementMode} be deployed."
+      }
+    ],
+    "parameters": {
+      "emailSecurityContact": {
+        "value": "ph_bootstrap_user_e-mail"
+      },
+      "logAnalytics": {
+        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/ph_prefix-log-logre1"
+      },
+      "ascExportResourceGroupName": {
+        "value": "ph_prefix-rg-asc-export"
+      },
+      "ascExportResourceGroupLocation": {
+        "value": "${default_location}"
+      },
+      "enableAscForServers": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForServersVulnerabilityAssessments": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForSql": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForAppServices": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForStorage": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForContainers": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForKeyVault": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForSqlOnVm": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForArm": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForOssDb": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForCosmosDbs": {
+        "value": "DeployIfNotExists"
+      },
+      "enableAscForCspm": {
+        "value": "DeployIfNotExists"
+      },
+      "minimalSeverity": {
+        "value": "High"
+      },
+      "vulnerabilityAssessmentProvider": {
+        "value": "mdeTvm"
+      }
+    },
+    "scope": "${current_scope_resource_id}",
+    "notScopes": []
+  }
+}

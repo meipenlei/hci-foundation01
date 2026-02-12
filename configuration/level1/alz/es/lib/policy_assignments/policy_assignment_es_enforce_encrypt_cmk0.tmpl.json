@@ -1,0 +1,115 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "Enforce-Encrypt-CMK0",
+  "location": "${default_location}",
+  "dependsOn": [],
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "description": "This initiative assignment enables additional ALZ guardrails for Customer Managed Keys.",
+    "displayName": "Enforce recommended guardrails for Customer Managed Keys",
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/Enforce-Encryption-CMK_20250218",
+    "enforcementMode": "Default",
+    "nonComplianceMessages": [
+      {
+        "message": "Recommended guardrails {enforcementMode} be enforced for Customer Managed Keys."
+      }
+    ],
+    "scope": "${current_scope_resource_id}",
+    "notScopes": [],
+    "parameters": {
+      "ACRCmkEffect": {
+        "value": "Audit"
+      },
+      "AksCmkEffect": {
+        "value": "Audit"
+      },
+      "WorkspaceCMKEffect": {
+        "value": "Audit"
+      },
+      "CognitiveServicesCMKEffect": {
+        "value": "Audit"
+      },
+      "CosmosCMKEffect": {
+        "value": "audit"
+      },
+      "DataBoxCMKEffect": {
+        "value": "Audit"
+      },
+      "StreamAnalyticsCMKEffect": {
+        "value": "audit"
+      },
+      "SynapseWorkspaceCMKEffect": {
+        "value": "Audit"
+      },
+      "StorageCMKEffect": {
+        "value": "Audit"
+      },
+      "MySQLCMKEffect": {
+        "value": "AuditIfNotExists"
+      },
+      "PostgreSQLCMKEffect": {
+        "value": "AuditIfNotExists"
+      },
+      "SqlServerTDECMKEffect": {
+        "value": "Audit"
+      },
+      "HealthcareAPIsCMKEffect": {
+        "value": "audit"
+      },
+      "AzureBatchCMKEffect": {
+        "value": "Audit"
+      },
+      "EncryptedVMDisksEffect": {
+        "value": "AuditIfNotExists"
+      },
+      "AutomationAccountCmkEffect": {
+        "value": "Audit"
+      },
+      "BackupCmkEffect": {
+        "value": "Audit"
+      },
+      "cognitiveSearchCmk": {
+        "value": "AuditIfNotExists"
+      },
+      "osAndDataDiskCmk": {
+        "value": "Audit"
+      },
+      "containerInstanceCmk": {
+        "value": "Audit"
+      },
+      "adxCmk": {
+        "value": "Audit"
+      },
+      "adfCmk": {
+        "value": "Audit"
+      },
+      "eventHubNamespacesCmk": {
+        "value": "Audit"
+      },
+      "eventHubPremiumCmk": {
+        "value": "Audit"
+      },
+      "serviceBusDenyCmk": {
+        "value": "Audit"
+      },
+      "sqlManagedCmk": {
+        "value": "Audit"
+      },
+      "storageTableCmk": {
+        "value": "Audit"
+      },
+      "storageAccountsEncryptionCmk": {
+        "value": "Audit"
+      },
+      "storageQueueCmk": {
+        "value": "Audit"
+      },
+      "botServiceCmk": {
+        "value": "Audit"
+      }
+    }
+  }
+}

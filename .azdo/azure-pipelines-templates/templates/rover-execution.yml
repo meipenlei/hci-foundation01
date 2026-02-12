@@ -1,0 +1,141 @@
+# File: rover-execution.yml
+# template stages for validation and execution of modules
+
+parameters:
+  - name: timeoutInMinutes
+    displayName: 'Timeout in minutes'
+    type: number
+
+  - name: terraformAction
+    displayName: Terraform 'apply' or 'destroy'?
+    values:
+      - plan
+      - destroy
+
+  - name: roverDebug
+    displayName: Rover Debug Log?
+    type: boolean
+
+  - name: environment
+    displayName: Environment Name
+    type: string
+
+  - name: level
+    displayName: Level
+    type: string
+
+  - name: landing_zone_tfstate
+    displayName: LandingZone tfstate identifier
+    type: string
+
+  - name: landing_zone_path
+    displayName: LandingZone Path
+    type: string
+
+  - name: landing_zone_config
+    displayName: Config Path
+    type: string
+
+  - name: launchpad
+    displayName: Launchpad execution
+    type: boolean
+
+  - name: wlf_service_connection
+    displayName: Workload Federation Service Connection Name
+    type: string
+
+stages:
+- stage: validation${{ parameters.landing_zone_tfstate }}
+  displayName: Validation ${{ parameters.landing_zone_tfstate }}
+  variables:
+    - template: rover-command-options.yml
+      parameters:
+        roverDebug: ${{ parameters.roverDebug }}
+        launchpad: ${{ parameters.launchpad }}
+  jobs:
+    - job: ValidateDeployment${{ parameters.landing_zone_tfstate }}
+      container: rover
+      condition: or(eq(variables['terraformAction'], 'plan'), eq(variables['terraformAction'], 'plan -destroy'))
+      workspace:
+        clean: all
+      steps:
+      - checkout: self
+      - template: prepare-rover-execution.yml
+      - task: AzureCLI@2
+        displayName: 'Terraform $(terraformAction)'
+        inputs:
+          addSpnToEnvironment: true
+          scriptType: bash
+          failOnStandardError: true
+          connectedServiceNameARM: ${{ parameters.wlf_service_connection }}
+          scriptLocation: inlineScript
+          inlineScript: |
+            # Export ARM login related information to be able to use OIDC
+            export ARM_CLIENT_ID=$servicePrincipalId
+            export ARM_OIDC_TOKEN=$idToken
+            export ARM_TENANT_ID=$tenantId
+            export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+            export ARM_USE_CLI=false
+            export ARM_USE_OIDC=true
+            # export AZDO_PERSONAL_ACCESS_TOKEN=$(AZDO_PAT)
+            # Execute Rover
+            /tf/rover/rover.sh \
+              -lz $(Build.Repository.LocalPath)/${{ parameters.landing_zone_path }} \
+              -var-folder $(Build.Repository.LocalPath)/${{ parameters.landing_zone_config }} \
+              -tfstate ${{ parameters.landing_zone_tfstate }}.tfstate \
+              -env ${{ parameters.environment }} \
+              -level ${{ parameters.level }} \
+              -parallelism=30 \
+              -p $(Pipeline.Workspace)/${{ parameters.landing_zone_tfstate }}.tfplan \
+              -a $(terraformAction) $(ROVER_LAUNCHPAD) $(ROVER_DEBUG)
+          
+      - publish: $(Pipeline.Workspace)/${{ parameters.landing_zone_tfstate }}.tfplan
+        artifact: ${{ parameters.landing_zone_tfstate }}
+
+- stage: execution${{ parameters.landing_zone_tfstate }}
+  displayName: Execution ${{ parameters.landing_zone_tfstate }}
+  variables:
+    - template: rover-command-options.yml
+      parameters:
+        roverDebug: ${{ parameters.roverDebug }}
+        launchpad: ${{ parameters.launchpad }}
+  jobs:
+    - deployment: ExecuteDeployment${{ parameters.landing_zone_tfstate }}
+      condition: and(succeeded(), eq(variables['isMain'], 'true'))
+      environment: ${{ parameters.environment }}
+      container: rover
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+            - download: current
+              artifact: ${{ parameters.landing_zone_tfstate }}
+            - template: prepare-rover-execution.yml
+            - task: AzureCLI@2
+              displayName: 'Terraform apply'
+              inputs:
+                addSpnToEnvironment: true
+                scriptType: bash
+                failOnStandardError: true
+                connectedServiceNameARM: ${{ parameters.wlf_service_connection }}
+                scriptLocation: inlineScript
+                inlineScript: |
+                  # Export ARM login related information to be able to use OIDC
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_OIDC_TOKEN=$idToken
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+                  export ARM_USE_CLI=false
+                  export ARM_USE_OIDC=true
+                  export AZDO_PERSONAL_ACCESS_TOKEN=$(AZDO_PAT)
+                  # Execute Rover
+                  /tf/rover/rover.sh \
+                        -lz $(Build.Repository.LocalPath)/${{ parameters.landing_zone_path }} \
+                        -var-folder $(Build.Repository.LocalPath)/${{ parameters.landing_zone_config }} \
+                        -tfstate ${{ parameters.landing_zone_tfstate }}.tfstate \
+                        -env ${{ parameters.environment }} \
+                        -level ${{ parameters.level }} \
+                        -parallelism=30 \
+                        -p $(Pipeline.Workspace)/${{ parameters.landing_zone_tfstate }}/${{ parameters.landing_zone_tfstate }}.tfplan \
+                        -a apply $(ROVER_LAUNCHPAD) $(ROVER_DEBUG)

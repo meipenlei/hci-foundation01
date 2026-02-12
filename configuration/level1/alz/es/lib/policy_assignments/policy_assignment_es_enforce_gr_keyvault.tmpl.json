@@ -1,0 +1,166 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "Enforce-GR-KeyVault",
+  "dependsOn": [],
+  "properties": {
+    "description": "This initiative assignment enables recommended ALZ guardrails for Azure Key Vault.",
+    "displayName": "Enforce recommended guardrails for Azure Key Vault",
+    "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policySetDefinitions/Enforce-Guardrails-KeyVault",
+    "enforcementMode": "Default",
+    "scope": "${current_scope_resource_id}",
+    "notScopes": [],
+    "parameters": {
+      "effectKvSoftDelete": {
+        "value": "Audit"
+      },
+      "effectKvPurgeProtection": {
+        "value": "Audit"
+      },
+      "effectKvSecretsExpire": {
+        "value": "Audit"
+      },
+      "effectKvKeysExpire": {
+        "value": "Audit"
+      },
+      "effectKvFirewallEnabled": {
+        "value": "Audit"
+      },
+      "effectKvCertLifetime": {
+        "value": "Audit"
+      },
+      "maximumCertLifePercentageLife": {
+        "value": 80
+      },
+      "minimumCertLifeDaysBeforeExpiry": {
+        "value": 90
+      },
+      "effectKvKeysLifetime": {
+        "value": "Audit"
+      },
+      "minimumKeysLifeDaysBeforeExpiry": {
+        "value": 90
+      },
+      "effectKvSecretsLifetime": {
+        "value": "Audit"
+      },
+      "minimumSecretsLifeDaysBeforeExpiry": {
+        "value": 90
+      },
+      "keyVaultCheckMinimumRSACertificateSize": {
+        "value": "Audit"
+      },
+      "keyVaultMinimumRSACertificateSizeValue": {
+        "value": 2048
+      },
+      "keyVaultManagedHsmCheckMinimumRSAKeySize": {
+        "value": "Audit"
+      },
+      "keyVaultManagedHsmMinimumRSAKeySizeValue": {
+        "value": 2048
+      },
+      "keyVaultCheckMinimumRSAKeySize": {
+        "value": "Audit"
+      },
+      "keyVaultMinimumRSAKeySizeValue": {
+        "value": 2048
+      },
+      "keyVaultArmRbac": {
+        "value": "Audit"
+      },
+      "keyVaultHmsPurgeProtection": {
+        "value": "Audit"
+      },
+      "keyVaultCertificatesPeriod": {
+        "value": "Disabled"
+      },
+      "keyVaultCertValidPeriod": {
+        "value": 12
+      },
+      "keyVaultHmsKeysExpiration": {
+        "value": "Audit"
+      },
+      "keysValidPeriod": {
+        "value": "Disabled"
+      },
+      "keysValidityInDays": {
+        "value": 90
+      },
+      "secretsValidPeriod": {
+        "value": "Audit"
+      },
+      "secretsValidityInDays": {
+        "value": 90
+      },
+      "keyVaultCertKeyTypes": {
+        "value": "Audit"
+      },
+      "keyVaultEllipticCurve": {
+        "value": "Audit"
+      },
+      "keyVaultCryptographicType": {
+        "value": "Audit"
+      },
+      "keysActive": {
+        "value": "Disabled"
+      },
+      "keysActiveInDays": {
+        "value": 90
+      },
+      "keysCurveNames": {
+        "value": "Audit"
+      },
+      "secretsActiveInDays": {
+        "value": 90
+      },
+      "secretsActive": {
+        "value": "Disabled"
+      },
+      "keyVaultSecretContentType": {
+        "value": "Audit"
+      },
+      "keyVaultNonIntegratedCa": {
+        "value": "Disabled"
+      },
+      "keyVaultNonIntegratedCaValue": {
+        "value": ""
+      },
+      "keyVaultIntegratedCa": {
+        "value": "Audit"
+      },
+      "keyVaultIntegratedCaValue": {
+        "value": [
+          "DigiCert",
+          "GlobalSign"
+        ]
+      },
+      "keyVaultHsmMinimumDaysBeforeExpiration": {
+        "value": "Audit"
+      },
+      "keyVaultHsmMinimumDaysBeforeExpirationValue": {
+        "value": 90
+      },
+      "keyVaultHmsCurveNames": {
+        "value": "Audit"
+      },
+      "keyVaultHmsCurveNamesValue": {
+        "value": [
+          "P-256",
+          "P-256K",
+          "P-384",
+          "P-521"
+        ]
+      },
+      "keyVaultCertificateNotExpireWithinSpecifiedNumberOfDays": {
+        "value": "Audit"
+      },
+      "keyVaultCertificateNotExpireWithinSpecifiedNumberOfDaysValue": {
+        "value": 90
+      }
+    }
+  },
+  "location": "${default_location}",
+  "identity": {
+    "type": "None"
+  }
+}

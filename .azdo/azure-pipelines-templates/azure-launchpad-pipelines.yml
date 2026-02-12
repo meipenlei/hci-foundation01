@@ -1,0 +1,119 @@
+
+name: Launchpad
+
+parameters:
+  - name: timeoutInMinutes
+    displayName: 'Timeout in minutes'
+    type: number
+    default: 60
+  - name: terraformAction
+    displayName: Terraform 'apply' or 'destroy'?
+    values:
+      - plan
+      - destroy
+  - name: lz
+    displayName: On which level which landingzone?
+    values:
+       - level0-launchpad
+       - level0-credentials
+       - level0-agent
+  - name: branch
+    displayName: Which branch do you use?
+    default: main
+    type: string
+    values:
+      - main
+      - feature
+
+variables:
+  - group: release-global
+  - group: ${{ parameters.lz }}
+  - name: terraformAction
+    ${{ if eq(parameters.terraformAction, 'plan') }}:
+      value: 'plan'
+    ${{ elseif eq(parameters.terraformAction, 'destroy') }}:
+      value: 'plan -destroy'
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')] # runtime expression
+  - name: TF_DATA_DIR
+    value: /tf/caf/.terraform.cache
+  - name: branch
+    value: ${{ parameters.branch }}
+
+resources:
+  containers:
+  - container: rover
+    image: $(ROVER_IMAGE)
+    options: --user 0:0 -e TF_PLUGIN_CACHE_DIR="/tf/caf/.terraform.cache" -e TF_DATA_DIR="/tf/caf/.terraform.cache"
+
+pool:
+  name: $(AGENT_POOL)
+  demands:
+    - ImageOverride -equals ubuntu-22.04
+
+stages:
+- stage: validation
+  displayName: Validation
+  jobs:
+    - job: ValidateDeployment
+      timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+      condition: or(eq(variables['terraformAction'], 'plan'), eq(variables['terraformAction'], 'plan -destroy'))
+      container: rover
+      workspace:
+        clean: all
+      steps:
+      - checkout: self
+      - template: templates/prepare-rover-execution-msi.yml
+      - bash: |
+          # Execute Rover
+          /tf/rover/rover.sh \
+            --impersonate-sp-from-keyvault-url $(KEYVAULTURL) \
+            -lz $(Build.Repository.LocalPath)/$(LANDINGZONEPATH) \
+            -var-folder $(Build.Repository.LocalPath)/$(CONFIGPATH) \
+            -tfstate_subscription_id $(TFSTATESUB) \
+            -target_subscription $(TARGETSUB) \
+            -tfstate $(TFSTATE).tfstate \
+            -env $(ENVIRONMENT) \
+            -level $(LEVEL) \
+            -launchpad \
+            -parallelism=30 \
+            -p $(Pipeline.Workspace)/$(PLAN).tfplan \
+            -a $(terraformAction)
+        failOnStderr: true
+        displayName: 'Terraform $(terraformAction)'
+      - publish: $(Pipeline.Workspace)/$(PLAN).tfplan
+        artifact: tfstate
+
+- stage: execution
+  displayName: Execution
+  jobs:
+    - deployment: ExecuteDeployment
+      timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+      condition: and(succeeded(), eq(variables['isMain'], 'true'))
+      environment: 'ph_environment'
+      container: rover
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+            - download: current
+              artifact: tfstate
+            - template: templates/prepare-rover-execution-msi.yml
+            - bash: |
+                # Execute Rover
+                /tf/rover/rover.sh \
+                      --impersonate-sp-from-keyvault-url $(KEYVAULTURL) \
+                      -lz $(Build.Repository.LocalPath)/$(LANDINGZONEPATH) \
+                      -var-folder $(Build.Repository.LocalPath)/$(CONFIGPATH) \
+                      -tfstate_subscription_id $(TFSTATESUB) \
+                      -target_subscription $(TARGETSUB) \
+                      -tfstate $(TFSTATE).tfstate \
+                      -env $(ENVIRONMENT) \
+                      -level $(LEVEL) \
+                      -launchpad \
+                      -parallelism=30 \
+                      -p $(Pipeline.Workspace)/tfstate/$(PLAN).tfplan \
+                      -a apply
+              failOnStderr: true
+              displayName: 'Terraform apply'

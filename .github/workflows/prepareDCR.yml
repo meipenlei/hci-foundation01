@@ -1,0 +1,62 @@
+name: Preparation DCRs
+
+on:
+  workflow_dispatch:
+    inputs:
+      timeoutInMinutes:
+        description: 'Timeout in minutes'
+        type: string
+        default: '60'
+      ROVER_IMAGE:
+        description: 'Image for Rover'
+        type: string
+        required: true
+        default: 'ph_rover_version'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  preparation:
+    name: Preparation
+    runs-on: [self-hosted, ph_prefix, ph_environment]
+    environment: credentials
+    timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+    container:
+      image: ${{ inputs.ROVER_IMAGE }}
+      options: --user 0:0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Verify az CLI inside container
+        run: az version
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create Basic DCR
+        run: |
+          az account set --subscription ph_management_subscription_id
+          az deployment group create \
+            --name BasicMonitoringDeployment \
+            --resource-group 'ph_prefix-rg-mgmt' \
+            --template-file configuration/dev/DCR/Basic/basicMonitoring.json \
+            --parameters configuration/dev/DCR/Basic/parameters.json
+
+      - name: Create CT DCR
+        run: |
+          az account set --subscription ph_management_subscription_id
+          az deployment group create \
+            --name CTMonitoringDeployment \
+            --resource-group 'ph_prefix-rg-mgmt' \
+            --template-file configuration/dev/DCR/CT/CTMonitoring.json \
+            --parameters configuration/dev/DCR/CT/parameters.json

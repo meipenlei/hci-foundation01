@@ -1,0 +1,367 @@
+name: Launchpad
+run-name: "${{ github.workflow }}(${{ inputs.terraformAction }} -> ${{ inputs.lz }})"
+
+on:
+    workflow_dispatch:
+        inputs:
+            timeoutInMinutes:
+                description: 'Timeout in minutes'
+                required: true
+                type: string
+                default: '90'
+            parallelism:
+                description: 'Terraform parallelism'
+                required: false
+                type: string
+                default: '30'
+            terraformAction:
+                description: 'Terraform "plan" or "destroy"?'
+                type: choice
+                required: true
+                options:
+                    - apply
+                    - destroy
+            lz: 
+                description: 'On which level which landingzone?'
+                required: true
+                type: choice
+                options: 
+                    - level0-launchpad
+                    - level0-runner
+            environment:
+                description: 'Environment Name'
+                type: choice
+                required: true
+                default: 'DEV'     
+                options:
+                    - DEV
+                    - TEST
+                    - PROD                                     
+            ROVER_IMAGE:
+                description: 'Image for Rover'
+                type: string
+                required: true
+                default: 'ph_rover_version'
+            isPrivateImage:
+                description: 'Is the image private?'
+                type: boolean
+                required: true
+                default: false
+
+permissions:
+  id-token: write
+  contents: read
+  packages: read
+
+env:
+    TERRAFORM_ACTION: ${{ inputs.terraformAction == 'apply' && 'plan' || inputs.terraformAction == 'destroy' && 'plan -destroy'  }}
+
+jobs:
+    validation-private:
+        timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+        if: ${{ inputs.isPrivateImage }}
+        runs-on: [self-hosted, ph_prefix, ph_environment] 
+
+        environment: 
+            name: ${{ inputs.lz }}
+
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.PAT_GITHUB_RUNNER }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Check inputs 
+              run: |
+                echo "------------- input values for rover -------------"
+                echo "lz               = ${{inputs.lz}}"
+                echo "environment      = ${{inputs.environment}}"
+                echo "TERRAFORM_ACTION = ${{env.TERRAFORM_ACTION}}"
+
+            - name: MSI Log in
+              run:  |
+                echo "------------- log in MSI -------------"
+                az account clear
+                az login --identity --resource-id ${{ vars.MSI_RESOURCE_ID }} || \
+                (echo "Specific MSI failed, trying default identity" && az login --identity)          
+
+            - name: Replace PAT on the fly
+              if: ${{ (inputs.lz == 'level0-runner') && (env.TERRAFORM_ACTION == 'plan') }}
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars                 
+
+            - name: Execute Rover plan
+              run: |
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                ls /tf/caf/${{vars.CONFIGPATH}}
+               
+                echo "------------- Execute Rover plan -------------"
+                /tf/rover/rover.sh \
+                  --impersonate-sp-from-keyvault-url ${{ vars.KEYVAULTURL }} \
+                  -lz /tf/caf/${{ vars.LANDINGZONEPATH }} \
+                  -var-folder /tf/caf/${{ vars.CONFIGPATH }} \
+                  -tfstate_subscription_id ${{ vars.TFSTATESUB }} \
+                  -target_subscription ${{ vars.TARGETSUB }} \
+                  -tfstate ${{ vars.TFSTATE }}.tfstate \
+                  -env ${{ inputs.environment }} \
+                  -level ${{ vars.LEVEL }} \
+                  -launchpad \
+                  -parallelism=${{ fromJSON(inputs.parallelism) }} \
+                  -p /tf/caf/${{ vars.PLAN }}.tfplan \
+                  -a ${{env.TERRAFORM_ACTION}}
+
+            - name: Publish Terraform Plan
+              uses: actions/upload-artifact@v4.4.3
+              with:
+                  name: tfstate
+                  path: /tf/caf/${{ vars.PLAN }}.tfplan
+
+    validation-public:
+        timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+        if: ${{ !inputs.isPrivateImage }}
+        runs-on: [self-hosted, ph_prefix, ph_environment] 
+
+        environment: 
+            name: ${{ inputs.lz }}
+
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Check inputs 
+              run: |
+                echo "------------- input values for rover -------------"
+                echo "lz               = ${{inputs.lz}}"
+                echo "environment      = ${{inputs.environment}}"
+                echo "TERRAFORM_ACTION = ${{env.TERRAFORM_ACTION}}"
+
+            - name: MSI Log in
+              run:  |
+                echo "------------- log in MSI -------------"
+                az account clear
+                az login --identity --resource-id ${{ vars.MSI_RESOURCE_ID }} || \
+                (echo "Specific MSI failed, trying default identity" && az login --identity)          
+
+            - name: Replace PAT on the fly
+              if: ${{ (inputs.lz == 'level0-runner') && (env.TERRAFORM_ACTION == 'plan') }}
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars                 
+
+            - name: Execute Rover plan
+              run: |
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+
+                ls /tf/caf/${{vars.CONFIGPATH}}
+               
+                echo "------------- Execute Rover plan -------------"
+                /tf/rover/rover.sh \
+                  --impersonate-sp-from-keyvault-url ${{ vars.KEYVAULTURL }} \
+                  -lz /tf/caf/${{ vars.LANDINGZONEPATH }} \
+                  -var-folder /tf/caf/${{ vars.CONFIGPATH }} \
+                  -tfstate_subscription_id ${{ vars.TFSTATESUB }} \
+                  -target_subscription ${{ vars.TARGETSUB }} \
+                  -tfstate ${{ vars.TFSTATE }}.tfstate \
+                  -env ${{ inputs.environment }} \
+                  -level ${{ vars.LEVEL }} \
+                  -launchpad \
+                  -parallelism=${{ fromJSON(inputs.parallelism) }} \
+                  -p /tf/caf/${{ vars.PLAN }}.tfplan \
+                  -a ${{env.TERRAFORM_ACTION}}
+
+            - name: Publish Terraform Plan
+              uses: actions/upload-artifact@v4.4.3
+              with:
+                  name: tfstate
+                  path: /tf/caf/${{ vars.PLAN }}.tfplan           
+
+    approval:
+        timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+        runs-on: [self-hosted, ph_prefix, ph_environment]
+        needs: [validation-private, validation-public]
+        if: ${{ always() && (needs.validation-private.result == 'success' || needs.validation-public.result == 'success') }}
+        environment:
+            name: ${{ inputs.environment }}
+        steps:
+            - name: Only one step
+              run: echo "Only one step"
+
+    deployment-private:
+        timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+        if: ${{ always() && inputs.isPrivateImage && needs.approval.result == 'success' }}
+        runs-on: [self-hosted, ph_prefix, ph_environment]
+        needs:  [approval]
+
+        environment: 
+            name: ${{ inputs.lz }}
+
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.PAT_GITHUB_RUNNER }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Download Terraform Plan
+              uses: actions/download-artifact@v4.1.8
+              with:
+                  name: tfstate
+
+            - name: Check inputs 
+              run: |
+                echo "------------- input values for rover -------------"
+                echo "lz               = ${{inputs.lz}}"
+                echo "environment      = ${{inputs.environment}}"
+                echo "TERRAFORM_ACTION = ${{env.TERRAFORM_ACTION}}"
+                ls -la
+
+            - name: MSI Log in
+              run:  |
+                echo "------------- log in MSI -------------"
+                az login --identity --resource-id ${{ vars.MSI_RESOURCE_ID }} || \
+                (echo "Specific MSI failed, trying default identity" && az login --identity)  
+
+            - name: Replace PAT on the fly
+              if: ${{ (inputs.lz == 'level0-runner') && (env.TERRAFORM_ACTION == 'plan') }}
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars                 
+
+            - name: Execute Rover apply
+              run: |             
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+               
+                echo "------------- Execute Rover apply -------------"
+                /tf/rover/rover.sh \
+                  --impersonate-sp-from-keyvault-url ${{ vars.KEYVAULTURL }} \
+                  -lz /tf/caf/${{ vars.LANDINGZONEPATH }} \
+                  -var-folder /tf/caf/${{ vars.CONFIGPATH }} \
+                  -tfstate_subscription_id ${{ vars.TFSTATESUB }} \
+                  -target_subscription ${{ vars.TARGETSUB }} \
+                  -tfstate ${{ vars.TFSTATE }}.tfstate \
+                  -env ${{ inputs.environment }} \
+                  -level ${{ vars.LEVEL }} \
+                  -launchpad \
+                  -parallelism=${{ fromJSON(inputs.parallelism) }} \
+                  -p /tf/caf/${{ vars.PLAN }}.tfplan \
+                  -a apply
+
+    deployment-public:
+        timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
+        if: ${{ always() && !inputs.isPrivateImage && needs.approval.result == 'success' }}
+        runs-on: [self-hosted, ph_prefix, ph_environment]
+        needs:  [approval]
+
+        environment: 
+            name: ${{ inputs.lz }}
+
+        container: 
+            image: ${{ inputs.ROVER_IMAGE }}
+            options: --user 0:0
+            volumes:
+                - ${{ github.workspace }}:/tf/caf
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Download Terraform Plan
+              uses: actions/download-artifact@v4.1.8
+              with:
+                  name: tfstate
+
+            - name: Check inputs 
+              run: |
+                echo "------------- input values for rover -------------"
+                echo "lz               = ${{inputs.lz}}"
+                echo "environment      = ${{inputs.environment}}"
+                echo "TERRAFORM_ACTION = ${{env.TERRAFORM_ACTION}}"
+                ls -la
+
+            - name: MSI Log in
+              run:  |
+                echo "------------- log in MSI -------------"
+                az login --identity --resource-id ${{ vars.MSI_RESOURCE_ID }} || \
+                (echo "Specific MSI failed, trying default identity" && az login --identity)  
+
+            - name: Replace PAT on the fly
+              if: ${{ (inputs.lz == 'level0-runner') && (env.TERRAFORM_ACTION == 'plan') }}
+              run: |
+                #--------------------------------------------
+                # PAT_GITHUB_RUNNER
+                #--------------------------------------------
+                dir="configuration/"
+                for i in $(find $dir -name '*.tfvars');
+                do
+                  sed -i 's/PAT_GITHUB_RUNNER/${{secrets.PAT_GITHUB_RUNNER}}/g' $i
+                done;
+                cat configuration/level0/agent/runner_init/virtual_machine_scale_sets.tfvars
+                cat configuration/level0/agent/runner/virtual_machine_scale_sets.tfvars                 
+
+            - name: Execute Rover apply
+              run: |             
+                sudo chmod -R 777 /tf/cache
+                git config --global --add safe.directory /tf/caf
+               
+                echo "------------- Execute Rover apply -------------"
+                /tf/rover/rover.sh \
+                  --impersonate-sp-from-keyvault-url ${{ vars.KEYVAULTURL }} \
+                  -lz /tf/caf/${{ vars.LANDINGZONEPATH }} \
+                  -var-folder /tf/caf/${{ vars.CONFIGPATH }} \
+                  -tfstate_subscription_id ${{ vars.TFSTATESUB }} \
+                  -target_subscription ${{ vars.TARGETSUB }} \
+                  -tfstate ${{ vars.TFSTATE }}.tfstate \
+                  -env ${{ inputs.environment }} \
+                  -level ${{ vars.LEVEL }} \
+                  -launchpad \
+                  -parallelism=${{ fromJSON(inputs.parallelism) }} \
+                  -p /tf/caf/${{ vars.PLAN }}.tfplan \
+                  -a apply

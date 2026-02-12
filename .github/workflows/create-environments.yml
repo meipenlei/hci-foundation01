@@ -1,0 +1,240 @@
+name: Create environments
+
+on: 
+    workflow_dispatch:
+      inputs:
+        level2-environment:
+          description: 'Deploy level2 environments (optional)?'
+          type: boolean
+          required: true
+          default: false
+        level3-environment:
+          description: 'Deploy level3 environment (optional)?'
+          type: boolean
+          required: true
+          default: false
+
+permissions:
+  id-token: write
+  contents: read
+  packages: read
+        
+jobs:
+    create-level0-environments:
+        runs-on: ubuntu-latest
+        environment: 
+            name: credentials
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4              
+
+            - name: Create level0-credentials
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level0-credentials
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}   
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level0/credentials
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-idl0.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level0
+                    TFSTATE: launchpad_credentials
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level0-launchpad
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level0-launchpad
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }} 
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level0/launchpad
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-idl0.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_launchpad
+                    LEVEL: level0
+                    TFSTATE: caf_launchpad
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level0-runner
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level0-runner
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }} 
+                    PAT_GITHUB_RUNNER: ${{ secrets.PAT_GITHUB_RUNNER }}
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level0/agent/runner
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-idl0.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level0
+                    TFSTATE: runner_level0
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+    create-level1-environments:
+        runs-on: ubuntu-latest
+        environment: 
+            name: credentials
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4                     
+
+            - name: Create level1-alz-es
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level1-alz-es
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }} 
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level1/alz/es
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-es.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution/add-ons/caf_eslz
+                    LEVEL: level1
+                    TFSTATE: alz_es
+                    TARGETSUB: ${{ vars.MANAGEMENT_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level1-identity
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level1-identity
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }} 
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level1/identity
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-id.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level1
+                    TFSTATE: identity
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level1-management
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level1-management
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}
+                    CONFIGPATH: configuration/level1/management
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-mg.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level1
+                    TFSTATE: management
+                    TARGETSUB: ${{ vars.MANAGEMENT_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level1-subscriptions
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level1-subscriptions
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}  
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                  
+                    CONFIGPATH: configuration/level1/subscriptions
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-idl0.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level1
+                    TFSTATE: subscriptions
+                    TARGETSUB: ${{ vars.MANAGEMENT_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+    create-level2-environments:
+        name: (optional) create-level2-environments
+        runs-on: ubuntu-latest
+        if: ${{ inputs.level2-environment == true }}
+        environment: 
+            name: credentials
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4      
+
+            - name: Create level2-connectivity-hub-reg3
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level2-connectivity-hub-reg3
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}  
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                  
+                    CONFIGPATH: configuration/level2/connectivity/hub_reg3
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-co.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level2
+                    TFSTATE: connectivity_hub_reg3
+                    TARGETSUB: ${{ vars.CONNECTIVITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level2-spoke1-reg1
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level2-spoke1-reg1
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}    
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                 
+                    CONFIGPATH: configuration/level2/connectivity/spoke1_reg1
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-co.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level2
+                    TFSTATE: connectivity_spoke1_reg1
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level2-spoke2-reg2
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level2-spoke2-reg2
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}  
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                  
+                    CONFIGPATH: configuration/level2/connectivity/spoke2_reg2
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-co.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level2
+                    TFSTATE: connectivity_spoke2_reg2
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level2-dc1-reg1
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level2-dc1-reg1
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }} 
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                  
+                    CONFIGPATH: configuration/level2/identity/dc1_reg1
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-id.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level2
+                    TFSTATE: dc1_reg1
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+            - name: Create level2-dc2-reg2
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level2-dc2-reg2
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}   
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}                 
+                    CONFIGPATH: configuration/level2/identity/dc2_reg2
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-id.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level2
+                    TFSTATE: dc2_reg2
+                    TARGETSUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }} 
+
+    create-level3-environment:
+        name: (optional) create-level3-environments
+        runs-on: ubuntu-latest
+        if: ${{ inputs.level3-environment == true }}
+        environment: 
+            name: credentials
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4      
+
+            - name: Create level3-testsa-reg3
+              uses: ./.github/actions/create-github-environment
+              with:
+                    Environment_name: level3-testsa-reg3
+                    PAT_GITHUB_ENVIRONMENT: ${{ secrets.PAT_GITHUB_ENVIRONMENT }}    
+                    MSI_RESOURCE_ID: ${{ vars.MSI_RESOURCE_ID }}               
+                    CONFIGPATH: configuration/level3/testsa_reg3
+                    KEYVAULTURL: https://${{vars.PREFIX}}-kv-scp.vault.azure.net/
+                    LANDINGZONEPATH: landingzones/caf_solution
+                    LEVEL: level3
+                    TFSTATE: testsa_reg3
+                    TARGETSUB: ${{ vars.APPLICATION_SUBSCRIPTION_ID }}  
+                    TFSTATESUB: ${{ vars.IDENTITY_SUBSCRIPTION_ID }}

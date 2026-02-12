@@ -1,0 +1,174 @@
+name: Cleanup launchpad
+
+on:
+    workflow_dispatch:
+        inputs:
+            prefix:
+                description: 'What is the prefix for the deployment (ph_prefix)?'
+                type: string
+                required: true
+            management_group_id:
+                description: 'What is the Management group id to remove Identity not found?'
+                type: string
+                required: true
+                default: 'Enter the management group id'
+    
+permissions:
+  id-token: write
+  contents: read
+  packages: read
+
+jobs:
+    Cleanup-Resourcegroup:
+        runs-on: ubuntu-latest
+        # We are using this environment only for Azure Login
+        environment: credentials
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   
+
+            - name: Azure CLI script
+              uses: azure/cli@v2
+              with:
+                azcliversion: latest
+                inlineScript: |
+                  az account show
+                  echo "prefix: ${{ inputs.prefix }}"             
+                
+                  echo "--------- Delete launchpad resource groups in ---"
+                  for name in $(az group list --query "[?starts_with(name, '${{ inputs.prefix }}-')].name" | jq -r .[]); do
+                    echo "deleting rg $name"
+                    az group delete --name $name --no-wait --yes
+                  done
+
+
+    Cleanup-Keyvaults:
+        runs-on: ubuntu-latest
+        needs: [Cleanup-Resourcegroup]
+        # We are using this environment only for Azure Login
+        environment: credentials
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   
+
+            - name: Azure CLI script
+              uses: azure/cli@v2
+              with:
+                azcliversion: latest
+                inlineScript: |
+                  az account show
+                  echo "prefix: ${{ inputs.prefix }}"    
+
+                  echo "--------- Purge Keyvaults ---"
+                  for name in $(az keyvault list --query "[?starts_with(name, '${{ inputs.prefix }}-')].name" | jq -r .[]); do
+                    echo "purging keyvault $name"
+                    az keyvault purge --name $name --no-wait
+                  done
+                  for name in $(az keyvault list-deleted --query "[?starts_with(name, '${{ inputs.prefix }}-')].name" | jq -r .[]); do
+                    echo "purging keyvault $name"
+                    az keyvault purge --name $name --no-wait
+                  done
+
+    Cleanup-Entragroups:
+        runs-on: ubuntu-latest
+        # We are using this environment only for Azure Login
+        environment: credentials
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   
+
+            - name: Azure CLI script
+              uses: azure/cli@v2
+              with:
+                azcliversion: latest
+                inlineScript: |
+                  az account show
+                  echo "prefix: ${{ inputs.prefix }}"    
+
+                  echo "--------- Delete Azure Entra groups ---"
+                  for id in $(az ad group list --filter "startswith(displayName, '${{ inputs.prefix }}-')" | jq -r .[].id); do
+                    echo "deleting group $id"
+                    az ad group delete --group $id
+                  done
+
+    Cleanup-Applications:
+        runs-on: ubuntu-latest
+        # We are using this environment only for Azure Login
+        environment: credentials
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   
+
+            - name: Azure CLI script
+              uses: azure/cli@v2
+              with:
+                azcliversion: latest
+                inlineScript: |
+                  az account show
+                  echo "prefix: ${{ inputs.prefix }}"                      
+                  echo "--------- Delete applications ---"
+                  for id in $(az ad app list --filter "startswith(displayName, '${{ inputs.prefix }}-')" | jq -r .[].appId); do
+                    echo "deleting app/serviceprincipal $id"
+                    az ad app delete --id $id
+                  done
+
+    Cleanup-identity-not-found:
+        runs-on: ubuntu-latest
+        # We are using this environment only for Azure Login
+        environment: credentials
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            
+            - name: Log in with Azure
+              uses: azure/login@v2
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   
+
+            - name: Azure CLI script
+              uses: azure/cli@v2
+              with:
+                azcliversion: latest
+                inlineScript: |
+                  az account show
+                  echo "prefix: ${{ inputs.prefix }}"                      
+                  echo "--------- Delete 'Identity not found' role assignments ---"
+                  for id in $(az role assignment list --query "[?principalName==''].id" | jq -r .[]); do
+                    echo "delete 'Identity not found' role assignments $id"
+                    az role assignment delete --ids $id
+                  done         
+                  for id in $(az role assignment list --scope /providers/Microsoft.Management/managementGroups/${{inputs.management_group_id}} --query "[?principalName==''].id" | jq -r .[]); do
+                    echo "delete 'Identity not found' from management group role assignments $id"
+                    az role assignment delete --ids $id
+                  done                   
+                 

@@ -1,0 +1,20 @@
+parameters:
+  - name: roverDebug
+    displayName: Rover Debug Log?
+    type: boolean  
+    
+  - name: launchpad
+    displayName: Launchpad execution
+    type: boolean
+
+variables:
+  - name: ROVER_LAUNCHPAD
+    ${{ if eq(parameters.launchpad, true) }}:
+      value: '-launchpad'    
+    ${{ else }}:
+      value: '' 
+  - name: ROVER_DEBUG
+    ${{ if eq(parameters.roverDebug, true) }}:
+      value: '-log-severity DEBUG'     
+    ${{ else }}:
+      value: '' 

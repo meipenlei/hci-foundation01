@@ -1,0 +1,88 @@
+name: create-github-environment
+description: Description of create-github-environment
+inputs:
+  Environment_name:
+    description: 'Environment Name'
+    required: true
+    default: 'github-env-name'
+
+  PAT_GITHUB_ENVIRONMENT:
+    description: 'Github Personal Access Token'
+    required: true
+
+  PAT_GITHUB_RUNNER:
+    description: 'Github Personal Access Token for Runner'
+
+  MSI_RESOURCE_ID:
+    description: "MSI Resource ID"
+    required: true
+
+  CONFIGPATH:
+    description: "Configuration path"
+    required: true       
+
+  KEYVAULTURL:
+    description: "Keyvault URL"
+    required: true   
+
+  LANDINGZONEPATH:
+    description: "Landingzone path"
+    required: true  
+
+  LEVEL:
+    description: "Level"
+    required: true  
+
+  TFSTATE:
+    description: "TFState and Plan use the same name."
+    required: true 
+
+  TARGETSUB:
+    description: "Azure Target Subscription Id"
+    required: true
+
+  TFSTATESUB:
+    description: "Azure TFState Subscription Id"
+    required: true
+runs: 
+    using: composite
+    steps:
+      - name: Check Github Cli
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ inputs.PAT_GITHUB_ENVIRONMENT }}
+        run: |
+            gh version
+            printf "\n---------------- Create an environment ----------------\n"
+            gh api \
+              -X PUT \
+              -H "Accept: application/vnd.github.v3+json" \
+              /repos/${{ github.repository }}/environments/${{ inputs.Environment_name }}
+
+            printf "\n---------------- Create an environment variables ----------------\n"
+            declare -A variables=(
+              [AGENT_POOL]="ph_prefix-level0-agent1"
+              [ARM_USE_MSI]="true"
+              [MSI_RESOURCE_ID]=${{ inputs.MSI_RESOURCE_ID }}
+              [CONFIGPATH]=${{ inputs.CONFIGPATH }}
+              [KEYVAULTURL]=${{ inputs.KEYVAULTURL }}
+              [LANDINGZONEPATH]=${{ inputs.LANDINGZONEPATH }}
+              [LEVEL]=${{ inputs.LEVEL }}
+              [PLAN]=${{ inputs.TFSTATE }}
+              [TARGETSUB]=${{ inputs.TARGETSUB }}
+              [TFSTATE]=${{ inputs.TFSTATE }}
+              [TFSTATESUB]=${{ inputs.TFSTATESUB }}
+            )
+
+            for key in "${!variables[@]}"; do
+              gh variable set "$key" --body "${variables[$key]}" --env "${{ inputs.Environment_name }}"
+            done
+
+            printf "\n---------------- Create environment secrets ----------------\n"
+            declare -A secrets=(
+              [PAT_GITHUB_RUNNER]=${{ inputs.PAT_GITHUB_RUNNER }}
+            )
+
+            for key in "${!secrets[@]}"; do
+              gh secret set "$key" --body "${secrets[$key]}" --env "${{ inputs.Environment_name }}"
+            done

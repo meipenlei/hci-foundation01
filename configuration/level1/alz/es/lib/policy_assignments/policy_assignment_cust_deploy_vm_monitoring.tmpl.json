@@ -1,0 +1,44 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "name": "CAF-Deploy-VM-Monitoring",
+  "location": "${default_location}",
+  "dependsOn": [],
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "description": "Enable Azure Monitor for the virtual machines (VMs) in the specified scope (management group, subscription or resource group). Takes Log Analytics workspace as parameter.",
+    "displayName": "Enable Azure Monitor for VMs",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
+    "definitionVersion": "1.*.*",
+    "enforcementMode": "Default",
+    "nonComplianceMessages": [
+      {
+        "message": "Azure Monitor {enforcementMode} be enabled for Virtual Machines."
+      }
+    ],
+    "parameters": {
+      "dcrResourceId": {
+        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.Insights/dataCollectionRules/ph_prefix-dcr-basic"
+      },
+      "bringYourOwnUserAssignedManagedIdentity": {
+        "value": true
+      },
+      "restrictBringYourOwnUserAssignedIdentityToSubscription": {
+        "value": false
+      },
+      "userAssignedIdentityResourceId": {
+        "value": "ph_MON_MSI_RESOURCE_ID"
+      },
+      "enableProcessesAndDependencies": {
+        "value": true
+      },
+      "scopeToSupportedImages": {
+        "value": false
+      }
+    },
+    "scope": "${current_scope_resource_id}",
+    "notScopes": []
+  }
+}

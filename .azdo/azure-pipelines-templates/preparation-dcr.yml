@@ -1,0 +1,94 @@
+name: Preparation DCRs
+
+trigger: none
+
+parameters:
+  - name: timeoutInMinutes
+    displayName: 'Timeout in minutes'
+    type: number
+    default: 60
+
+  - name: environment
+    displayName: Environment Name
+    type: string
+    default: dev
+
+  - name: wlf_service_connection
+    displayName: Workload Federation Service Connection Name
+    type: string
+    default: msi-bootstrap
+
+  - name: ROVER_IMAGE
+    displayName: Image for Rover
+    type: string
+    default: ph_rover_version
+
+variables:
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')] # runtime expression
+
+resources:
+  containers:
+  - container: rover
+    image: ${{ parameters.ROVER_IMAGE }}
+    options: --user 0:0 -e TF_PLUGIN_CACHE_DIR="/tf/caf/.terraform.cache" -e TF_DATA_DIR="/tf/caf/.terraform.cache"
+
+pool:  'level0'
+
+stages:
+- stage: preparation
+  displayName: Preparation
+  jobs:
+    - job: ResourceGroupCreation
+      container: rover
+      workspace:
+        clean: all
+      steps:
+      - checkout: self
+      - template: templates/prepare-rover-execution.yml
+      - task: AzureCLI@2
+        displayName: 'Create Basic DCR'
+        inputs:
+          addSpnToEnvironment: true
+          scriptType: bash
+          failOnStandardError: true
+          connectedServiceNameARM: ${{ parameters.wlf_service_connection }}
+          scriptLocation: inlineScript
+          inlineScript: |
+            # Export ARM login related information to be able to use OIDC
+            export ARM_CLIENT_ID=$servicePrincipalId
+            export ARM_OIDC_TOKEN=$idToken
+            export ARM_TENANT_ID=$tenantId
+            export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+            export ARM_USE_CLI=false
+            export ARM_USE_OIDC=true
+            # Execute
+            az account set --subscription ph_management_subscription_id
+            az deployment group create \
+              --name BasicMonitoringDeployment \
+              --resource-group 'ph_prefix-rg-mgmt' \
+              --template-file configuration/dev/DCR/Basic/basicMonitoring.json \
+              --parameters configuration/dev/DCR/Basic/parameters.json
+      - task: AzureCLI@2
+        displayName: 'Create CT DCR'
+        inputs:
+          addSpnToEnvironment: true
+          scriptType: bash
+          failOnStandardError: true
+          connectedServiceNameARM: ${{ parameters.wlf_service_connection }}
+          scriptLocation: inlineScript
+          inlineScript: |
+            # Export ARM login related information to be able to use OIDC
+            export ARM_CLIENT_ID=$servicePrincipalId
+            export ARM_OIDC_TOKEN=$idToken
+            export ARM_TENANT_ID=$tenantId
+            export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+            export ARM_USE_CLI=false
+            export ARM_USE_OIDC=true
+            # Execute
+            az account set --subscription ph_management_subscription_id
+            az deployment group create \
+              --name CTMonitoringDeployment \
+              --resource-group 'ph_prefix-rg-mgmt' \
+              --template-file configuration/dev/DCR/CT/CTMonitoring.json \
+              --parameters configuration/dev/DCR/CT/parameters.json

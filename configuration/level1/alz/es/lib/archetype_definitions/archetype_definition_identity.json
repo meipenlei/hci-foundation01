@@ -1,0 +1,15 @@
+{
+  "es_identity": {
+    "policy_assignments": [
+      "Deny-MgmtPorts-Internet",
+      "CAF-Deny-Public-IP"
+    ],
+    "policy_definitions": [],
+    "policy_set_definitions": [],
+    "role_definitions": [],
+    "archetype_config": {
+      "parameters": {},
+      "access_control": {}
+    }
+  }
+}

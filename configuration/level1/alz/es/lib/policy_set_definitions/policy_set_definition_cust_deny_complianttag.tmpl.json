@@ -1,0 +1,71 @@
+{
+  "name": "CAF-Deny-CompliantTag",
+  "apiVersion": "2021-06-01",
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "scope": null,
+  "properties": {
+    "displayName": "Tag Enforcement for all compliant Tags (not applicable for legacy subscriptions)",
+    "policyType": "Custom",
+    "description": "",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Regulatory Compliance"
+    },
+    "parameters": {
+      "compliantTag01": {
+        "type": "String",
+        "metadata": {
+          "description": "required value for tag"
+        },
+        "defaultValue": "ph_prefix-missing"
+      },
+      "compliantTag02": {
+        "type": "String",
+        "metadata": {
+          "description": "required value for tag"
+        },
+        "defaultValue": "ph_prefix-missing"
+      },
+      "compliantTag03": {
+        "type": "String",
+        "metadata": {
+          "description": "required value for tag"
+        },
+        "defaultValue": "ph_prefix-missing"
+      }
+    },
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "1649729777863787709",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/96670d01-0a4d-4649-9c89-2d3abc0a5025",
+        "parameters": {
+          "tagName": {
+            "value": "[parameters('compliantTag01')]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "667658226935429046",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/96670d01-0a4d-4649-9c89-2d3abc0a5025",
+        "parameters": {
+          "tagName": {
+            "value": "[parameters('compliantTag02')]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "2625964984633274532",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/96670d01-0a4d-4649-9c89-2d3abc0a5025",
+        "parameters": {
+          "tagName": {
+            "value": "[parameters('compliantTag03')]"
+          }
+        },
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": null
+  }
+}
