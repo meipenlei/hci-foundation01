@@ -19,10 +19,10 @@
     ],
     "parameters": {
       "workspaceName": {
-        "value": "ph_prefix-log-logre1"
+        "value": "hci01-log-logre1"
       },
       "automationAccountName": {
-        "value": "ph_prefix-aa-autoaccount1"
+        "value": "hci01-aa-autoaccount1"
       },
       "workspaceRegion": {
         "value": "${default_location}"
@@ -31,7 +31,7 @@
         "value": "${default_location}"
       },
       "rgName": {
-        "value": "ph_prefix-rg-mgmt"
+        "value": "hci01-rg-mgmt"
       },
       "dataRetention": {
         "value": "30"

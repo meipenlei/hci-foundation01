@@ -90,7 +90,7 @@ stages:
     - deployment: ExecuteDeployment
       timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
       condition: and(succeeded(), eq(variables['isMain'], 'true'))
-      environment: 'ph_environment'
+      environment: 'DEV'
       container: rover
       strategy:
         runOnce:

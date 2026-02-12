@@ -20,7 +20,7 @@
     ],
     "parameters": {
       "logAnalytics": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/ph_prefix-log-logre1"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/hci01-log-logre1"
       },
       "effect": {
         "value": "DeployIfNotExists"

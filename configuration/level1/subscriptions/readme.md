@@ -5,29 +5,29 @@ Set-up the subscription delegations for platform and landingzone subscriptions
 
 ```bash
 # For manual bootstrap:
-# Login to the subscription Connectivity with the user ph_bootstrap_user_e-mail
-rover login -t ph_tenant_name
+# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+rover login -t dacoplab.onmicrosoft.com
 
 rover \
-  <!-- --impersonate-sp-from-keyvault-url https://ph_prefix-kv-es.vault.azure.net/  \ -->
+  <!-- --impersonate-sp-from-keyvault-url https://hci01-kv-es.vault.azure.net/  \ -->
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level1/subscriptions \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_management_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate subscriptions.tfstate \
-  -env ph_environment \
+  -env DEV \
   -level level1 \
   -p ${TF_DATA_DIR}/subscriptions.tfplan \
   -a plan #-destroy
 
 rover \
-  --impersonate-sp-from-keyvault-url https://ph_prefix-kv-es.vault.azure.net/  \
+  --impersonate-sp-from-keyvault-url https://hci01-kv-es.vault.azure.net/  \
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level1/subscriptions \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_management_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate subscriptions.tfstate \
-  -env ph_environment \
+  -env DEV \
   -level level1 \
   -p ${TF_DATA_DIR}/subscriptions.tfplan \
   -a apply

@@ -92,7 +92,7 @@ CUSTOM_DATA
       custom_script = {
         fileuri_sa_key            = "sa1"
         fileuri_sa_path           = "scripts/install-runner.sh"
-        commandtoexecute          = "RUNNER_CFG_PAT='PAT_GITHUB_RUNNER' bash install-runner.sh -s 'ph_GitHub_Org_Name/ph_GitHub_Repo_Name' -u 'adminuser' -l 'ph_prefix,ph_environment' -r 'default' -f"
+        commandtoexecute          = "RUNNER_CFG_PAT='PAT_GITHUB_RUNNER' bash install-runner.sh -s 'meipenlei/hci-foundation01' -u 'adminuser' -l 'hci01,DEV' -r 'default' -f"
         automatic_upgrade_enabled = false
         identity_type             = "UserAssigned"
         managed_identity_key      = "level0"

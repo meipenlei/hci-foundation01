@@ -38,4 +38,4 @@ git config --global credential.useHttpPath true
 git config --global http.sslverify false
 
 git config --global user.name "Cloud Enabler"              # modify to your name
-git config --global user.email "ph_bootstrap_user_e-mail" # modify to your email address
+git config --global user.email "admin@cloudenabler.onmicrosoft.com" # modify to your email address

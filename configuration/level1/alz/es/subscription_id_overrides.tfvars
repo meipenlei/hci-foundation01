@@ -7,13 +7,13 @@ subscription_id_overrides = {
   online         = []
   platform       = []
   connectivity = [
-    "ph_connectivity_subscription_id"
+    "f371e124-4b06-46ea-9d63-f51d48d76e64"
   ]
   management = [
-    "ph_management_subscription_id"
+    "f371e124-4b06-46ea-9d63-f51d48d76e64"
   ]
   identity = [
-    "ph_identity_subscription_id"
+    "f371e124-4b06-46ea-9d63-f51d48d76e64"
   ]
 }
 

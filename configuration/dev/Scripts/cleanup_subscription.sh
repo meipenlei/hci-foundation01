@@ -1,7 +1,7 @@
 #!/bin/bash
 ## manual usage from the root of the repository:
 ## az login --tenant <TENANT_ID> [--use-device-code]
-## az account set --subscription ph_identity_subscription_id
+## az account set --subscription f371e124-4b06-46ea-9d63-f51d48d76e64
 ## bash configuration/dev/Scripts/cleanup_subscription.sh
 
 # Determine prefix

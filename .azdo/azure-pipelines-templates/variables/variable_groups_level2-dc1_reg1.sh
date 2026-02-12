@@ -8,14 +8,14 @@ source /tf/caf/.azdo/azure-pipelines-templates/variables/secure.sh
 variableGroupName="level2-dc1_reg1"
 
 variableGroupId=$(az pipelines variable-group create --name "$variableGroupName" --authorize true --variables \
-    AGENT_POOL=ph_prefix-level0-agent1 \
+    AGENT_POOL=hci01-level0-agent1 \
     ARM_USE_MSI=true \
     CONFIGPATH=configuration/level2/identity/dc1_reg1 \
-    KEYVAULTURL=https://ph_prefix-kv-id.vault.azure.net/ \
+    KEYVAULTURL=https://hci01-kv-id.vault.azure.net/ \
     LANDINGZONEPATH=landingzones/caf_solution \
     LEVEL=level2 \
     PLAN=dc1_reg1 \
-    TARGETSUB=ph_identity_subscription_id \
+    TARGETSUB=f371e124-4b06-46ea-9d63-f51d48d76e64 \
     TFSTATE=dc1_reg1 \
     TFSTATESUB=$TFSTATESUB \
     --query id)

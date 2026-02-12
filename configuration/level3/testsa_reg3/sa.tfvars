@@ -1,7 +1,7 @@
 storage_accounts = {
   # Is used to store the azure devops deployment script to setup the Azure Devops Selfhosted agents
   sa1 = {
-    name                     = "ph_prefixsttestsa1"
+    name                     = "hci01sttestsa1"
     resource_group_key       = "rg1"
     account_kind             = "StorageV2"
     account_tier             = "Standard"
@@ -18,7 +18,7 @@ storage_accounts = {
       subnets = {
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }

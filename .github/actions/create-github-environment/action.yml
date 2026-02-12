@@ -61,7 +61,7 @@ runs:
 
             printf "\n---------------- Create an environment variables ----------------\n"
             declare -A variables=(
-              [AGENT_POOL]="ph_prefix-level0-agent1"
+              [AGENT_POOL]="hci01-level0-agent1"
               [ARM_USE_MSI]="true"
               [MSI_RESOURCE_ID]=${{ inputs.MSI_RESOURCE_ID }}
               [CONFIGPATH]=${{ inputs.CONFIGPATH }}

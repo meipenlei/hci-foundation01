@@ -9,7 +9,7 @@ keyvaults = {
     enable_rbac_authorization = true
     tags = {
       caf_tfstate     = "level0"
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
     }
   }
 
@@ -22,7 +22,7 @@ keyvaults = {
     enable_rbac_authorization = true
     tags = {
       caf_tfstate     = "level1"
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
     }
   }
 
@@ -35,7 +35,7 @@ keyvaults = {
     enable_rbac_authorization = true
     tags = {
       caf_tfstate     = "level2"
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
     }
   }
 
@@ -48,7 +48,7 @@ keyvaults = {
     enable_rbac_authorization = true
     tags = {
       caf_tfstate     = "level3"
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
     }
   }
 
@@ -61,7 +61,7 @@ keyvaults = {
     enable_rbac_authorization = true
     tags = {
       caf_tfstate     = "level4"
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
     }
   }
 
@@ -73,7 +73,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_level0"
     }
   }
@@ -86,7 +86,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_identity"
     }
   }
@@ -99,7 +99,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_management"
     }
   }
@@ -112,7 +112,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_alz"
     }
   }
@@ -125,7 +125,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_connectivity"
     }
   }
@@ -138,7 +138,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_subscription_creation_platform"
     }
   }
@@ -151,7 +151,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_subscription_creation_landingzones"
     }
   }
@@ -164,7 +164,7 @@ keyvaults = {
     soft_delete_enabled       = false
     enable_rbac_authorization = true
     tags = {
-      caf_environment      = "ph_environment"
+      caf_environment      = "DEV"
       caf_identity_aad_key = "cred_gitops"
     }
   }

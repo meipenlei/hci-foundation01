@@ -14,7 +14,7 @@ Import-Module Az
 Connect-AzAccount -UseDeviceAuthentication
 
 # Get the subscription you want to set as the context
-$subscription = Get-AzSubscription --SubscriptionId "ph_identity_subscription_id"
+$subscription = Get-AzSubscription --SubscriptionId "f371e124-4b06-46ea-9d63-f51d48d76e64"
 
 # Set the context
 Set-AzContext -Subscription $subscription

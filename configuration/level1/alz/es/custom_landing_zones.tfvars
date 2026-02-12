@@ -1,7 +1,7 @@
 custom_landing_zones = {
-  "ph_prefix-custom" = {
+  "hci01-custom" = {
     display_name               = "Custom"
-    parent_management_group_id = "ph_prefix-landing-zones"
+    parent_management_group_id = "hci01-landing-zones"
     archetype_config = {
       archetype_id   = "custom"
       parameters     = {}
@@ -9,7 +9,7 @@ custom_landing_zones = {
     }
     subscriptions = {}
     subscription_ids = [
-      "ph_app001_subscription_id"
+      "f371e124-4b06-46ea-9d63-f51d48d76e64"
     ]
   }
 }

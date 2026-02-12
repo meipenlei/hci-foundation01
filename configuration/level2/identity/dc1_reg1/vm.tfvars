@@ -46,7 +46,7 @@ virtual_machines = {
         identity = {
           type = "SystemAssigned, UserAssigned"
           managed_identity_ids = [
-            "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-level1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ph_prefix-msi-mon"
+            "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-level1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hci01-msi-mon"
           ]
         }
 

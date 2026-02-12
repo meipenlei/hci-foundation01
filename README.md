@@ -22,7 +22,7 @@ This implementation follows a **multi-level deployment strategy** that progressi
 
 ### Container-Based Execution
 
-- **Rover Image**: `ph_rover_version`
+- **Rover Image**: `meipenleikap/dt1aztfmod:1.12.2-2506.2617`
 - Includes Terraform, Azure CLI, and CAF-specific tooling
 - Ensures consistent deployments across environments
 

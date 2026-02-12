@@ -16,7 +16,7 @@ keyvaults = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using subnet_id
         subnet1 = {
-          subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }

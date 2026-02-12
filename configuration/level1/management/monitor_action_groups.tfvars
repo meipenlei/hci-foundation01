@@ -15,7 +15,7 @@ monitor_action_groups = {
     email_receiver = {
       noc = {
         name                    = "email_alert_support1"
-        email_address           = "ph_bootstrap_user_e-mail"
+        email_address           = "admin@cloudenabler.onmicrosoft.com"
         use_common_alert_schema = false
       }
     }

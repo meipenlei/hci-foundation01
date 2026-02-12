@@ -41,7 +41,7 @@ on:
                 description: 'Image for Rover'
                 type: string
                 required: true
-                default: 'ph_rover_version'
+                default: 'meipenleikap/dt1aztfmod:1.12.2-2506.2617'
             isPrivateImage:
                 description: 'Is the image private?'
                 type: boolean
@@ -60,7 +60,7 @@ jobs:
     validation-private:
         timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
         if: ${{ inputs.isPrivateImage }}
-        runs-on: [self-hosted, ph_prefix, ph_environment] 
+        runs-on: [self-hosted, hci01, DEV] 
 
         environment: 
             name: ${{ inputs.lz }}
@@ -137,7 +137,7 @@ jobs:
     validation-public:
         timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
         if: ${{ !inputs.isPrivateImage }}
-        runs-on: [self-hosted, ph_prefix, ph_environment] 
+        runs-on: [self-hosted, hci01, DEV] 
 
         environment: 
             name: ${{ inputs.lz }}
@@ -210,7 +210,7 @@ jobs:
 
     approval:
         timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
-        runs-on: [self-hosted, ph_prefix, ph_environment]
+        runs-on: [self-hosted, hci01, DEV]
         needs: [validation-private, validation-public]
         if: ${{ always() && (needs.validation-private.result == 'success' || needs.validation-public.result == 'success') }}
         environment:
@@ -222,7 +222,7 @@ jobs:
     deployment-private:
         timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
         if: ${{ always() && inputs.isPrivateImage && needs.approval.result == 'success' }}
-        runs-on: [self-hosted, ph_prefix, ph_environment]
+        runs-on: [self-hosted, hci01, DEV]
         needs:  [approval]
 
         environment: 
@@ -297,7 +297,7 @@ jobs:
     deployment-public:
         timeout-minutes: ${{ fromJSON(inputs.timeoutInMinutes) }}
         if: ${{ always() && !inputs.isPrivateImage && needs.approval.result == 'success' }}
-        runs-on: [self-hosted, ph_prefix, ph_environment]
+        runs-on: [self-hosted, hci01, DEV]
         needs:  [approval]
 
         environment: 

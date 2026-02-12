@@ -3,54 +3,54 @@ resource_groups = {
     name   = "level0"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level0"
-      cost_responsible = "ph_cost_responsible_level0"
+      solution_topic   = "hci01"
+      cost_center      = "IT"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
   level1 = {
     name   = "level1"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level1"
-      cost_responsible = "ph_cost_responsible_level1"
+      solution_topic   = "hci01"
+      cost_center      = "Governance"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
   level2 = {
     name   = "level2"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level2"
-      cost_responsible = "ph_cost_responsible_level2"
+      solution_topic   = "hci01"
+      cost_center      = "SharedServices"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
   level3 = {
     name   = "level3"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level3"
-      cost_responsible = "ph_cost_responsible_level3"
+      solution_topic   = "hci01"
+      cost_center      = "Platforms"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
   level4 = {
     name   = "level4"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level4"
-      cost_responsible = "ph_cost_responsible_level4"
+      solution_topic   = "hci01"
+      cost_center      = "Business"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
   sp_credentials = {
     name   = "credentials"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level0"
-      cost_responsible = "ph_cost_responsible_level0"
+      solution_topic   = "hci01"
+      cost_center      = "IT"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
 }

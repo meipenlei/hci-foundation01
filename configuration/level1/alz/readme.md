@@ -8,17 +8,17 @@ The Enterprise Scale configuration deploys a comprehensive management group stru
 
 ```
 ph_optional_root_parent_id (Root Parent)
-└── ph_prefix (ph_DevOpsOrg Any SubRoot)
-    ├── ph_prefix-platform
-    │   ├── ph_prefix-connectivity
-    │   ├── ph_prefix-identity
-    │   └── ph_prefix-management
-    ├── ph_prefix-landing-zones
-    │   ├── ph_prefix-corp
-    │   ├── ph_prefix-online
-    │   └── ph_prefix-custom
-    ├── ph_prefix-sandboxes
-    └── ph_prefix-decommissioned
+└── hci01 (https://dev.azure.com/CopDev/ Any SubRoot)
+    ├── hci01-platform
+    │   ├── hci01-connectivity
+    │   ├── hci01-identity
+    │   └── hci01-management
+    ├── hci01-landing-zones
+    │   ├── hci01-corp
+    │   ├── hci01-online
+    │   └── hci01-custom
+    ├── hci01-sandboxes
+    └── hci01-decommissioned
 ```
 
 ## 📋 Configuration Structure
@@ -96,8 +96,8 @@ This Enterprise Scale implementation is designed to support **both greenfield an
 ## 🔧 Current Configuration
 
 ### Root Configuration
-- **Root ID**: `ph_prefix`
-- **Display Name**: `ph_DevOpsOrg Any SubRoot`
+- **Root ID**: `hci01`
+- **Display Name**: `https://dev.azure.com/CopDev/ Any SubRoot`
 - **Parent ID**: `ph_optional_root_parent_id`
 - **Library Path**: `/tf/caf/configuration/level1/alz/es/lib`
 
@@ -108,9 +108,9 @@ This Enterprise Scale implementation is designed to support **both greenfield an
 - ❌ **SAP Landing Zones**: Disabled (not required)
 
 ### Custom Landing Zone
-- **Name**: `ph_prefix-custom`
-- **Parent**: `ph_prefix-landing_zones`
-- **Subscription**: `ph_app001_subscription_id`
+- **Name**: `hci01-custom`
+- **Parent**: `hci01-landing_zones`
+- **Subscription**: `f371e124-4b06-46ea-9d63-f51d48d76e64`
 - **Purpose**: Specialized workload requirements
 
 ## 📊 Compliance & Monitoring
@@ -137,7 +137,7 @@ This configuration is deployed as part of Level 1 CAF implementation:
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level1/alz \
   -tfstate alz_level1.tfstate \
-  -env ph_environment \
+  -env DEV \
   -level level1 \
   -a plan
 ```

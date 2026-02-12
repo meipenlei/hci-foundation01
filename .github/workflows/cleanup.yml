@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
             prefix:
-                description: 'What is the prefix for the deployment (ph_prefix)?'
+                description: 'What is the prefix for the deployment (hci01)?'
                 type: string
                 required: true
             management_group_id:

@@ -5,5 +5,5 @@
 To create the Variable Groups to the rover login as follows. Login a with your AAD user used for Azure DevOps. The user should have permission to create Variable Groups.
 
 ```bash
-rover login -t ph_tenant_name
+rover login -t dacoplab.onmicrosoft.com
 ```

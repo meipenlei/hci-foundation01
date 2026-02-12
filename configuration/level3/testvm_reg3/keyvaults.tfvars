@@ -10,7 +10,7 @@ keyvaults = {
         secret_permissions = ["Set", "Get", "List", "Delete", "Purge", "Recover"]
       }
       caf_platform_maintainers = {
-        object_id          = "ph_bootstrapper_object_id"
+        object_id          = "6455e5c3-d602-41cd-84a3-e903e45fa536"
         secret_permissions = ["Set", "Get", "List", "Delete", "Purge", "Recover"]
       }
     }

@@ -185,7 +185,7 @@ variable "azure_devops" {
     use_msi               = bool
   })
   default = {
-    url                   = "https://dev.azure.com/ph_DevOpsOrg"
+    url                   = "https://dev.azure.com/https://dev.azure.com/CopDev/"
     personal_access_token = ""
     use_msi               = false
   }

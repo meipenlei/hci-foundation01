@@ -2,19 +2,19 @@ azuread_groups = {
   caf_platform_maintainers = {
     name                   = "platform-maintainers"
     description            = "High privileged group to run all CAF deployments from vscode. Can be used to bootstrap or troubleshoot deployments."
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   caf_platform_contributors = {
     name                   = "platform-contributors"
     description            = "Can execute terraform plans for all levels. They can test platform improvements and propose PR."
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   caf_platform_readers = {
     name                   = "platform-readers"
     description            = "Can only read terraform plans for all levels. They can inform and verify platform improvements and support PR."
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   level0 = {
@@ -23,7 +23,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["level0"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   alz = {
@@ -32,7 +32,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["alz"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   identity = {
@@ -41,7 +41,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["identity"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   management = {
@@ -50,7 +50,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["management"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   connectivity = {
@@ -59,7 +59,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["connectivity"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   subscription_creation_platform = {
@@ -68,7 +68,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["subscription_creation_platform"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   subscription_creation_landingzones = {
@@ -77,7 +77,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["subscription_creation_landingzones"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
   gitops = {
@@ -86,7 +86,7 @@ azuread_groups = {
     members = {
       azuread_service_principal_keys = ["gitops"]
     }
-    owners                 = ["ph_bootstrapper_object_id"]
+    owners                 = ["6455e5c3-d602-41cd-84a3-e903e45fa536"]
     prevent_duplicate_name = true
   }
 }

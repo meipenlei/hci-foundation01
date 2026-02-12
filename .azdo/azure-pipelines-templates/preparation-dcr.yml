@@ -21,7 +21,7 @@ parameters:
   - name: ROVER_IMAGE
     displayName: Image for Rover
     type: string
-    default: ph_rover_version
+    default: meipenleikap/dt1aztfmod:1.12.2-2506.2617
 
 variables:
   - name: isMain
@@ -63,10 +63,10 @@ stages:
             export ARM_USE_CLI=false
             export ARM_USE_OIDC=true
             # Execute
-            az account set --subscription ph_management_subscription_id
+            az account set --subscription f371e124-4b06-46ea-9d63-f51d48d76e64
             az deployment group create \
               --name BasicMonitoringDeployment \
-              --resource-group 'ph_prefix-rg-mgmt' \
+              --resource-group 'hci01-rg-mgmt' \
               --template-file configuration/dev/DCR/Basic/basicMonitoring.json \
               --parameters configuration/dev/DCR/Basic/parameters.json
       - task: AzureCLI@2
@@ -86,9 +86,9 @@ stages:
             export ARM_USE_CLI=false
             export ARM_USE_OIDC=true
             # Execute
-            az account set --subscription ph_management_subscription_id
+            az account set --subscription f371e124-4b06-46ea-9d63-f51d48d76e64
             az deployment group create \
               --name CTMonitoringDeployment \
-              --resource-group 'ph_prefix-rg-mgmt' \
+              --resource-group 'hci01-rg-mgmt' \
               --template-file configuration/dev/DCR/CT/CTMonitoring.json \
               --parameters configuration/dev/DCR/CT/parameters.json

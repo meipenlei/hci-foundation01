@@ -3,9 +3,9 @@ resource_groups = {
     name   = "self-hosted-level0"
     region = "region1"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level0"
-      cost_responsible = "ph_cost_responsible_level0"
+      solution_topic   = "hci01"
+      cost_center      = "IT"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
 }

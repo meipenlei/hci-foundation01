@@ -24,7 +24,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level0"
     }
@@ -55,7 +55,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level1"
     }
@@ -86,7 +86,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level2"
     }
@@ -117,7 +117,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level3"
     }
@@ -148,7 +148,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level4"
     }

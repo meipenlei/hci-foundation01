@@ -7,29 +7,29 @@ rover logout
 
 ## login a with a user member of the caf-maintainers group
 
-rover login -t ph_tenant_name
+rover login -t dacoplab.onmicrosoft.com
 
 rover \
-  <!-- --impersonate-sp-from-keyvault-url https://ph_prefix-kv-co.vault.azure.net/ \ -->
+  <!-- --impersonate-sp-from-keyvault-url https://hci01-kv-co.vault.azure.net/ \ -->
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level2/connectivity/hub_reg3 \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_connectivity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate connectivity_hub_reg3.tfstate \
-  -env ph_environment \
+  -env DEV \
   -level level2 \
   -w tfstate \
   -p ${TF_DATA_DIR}/connectivity_hub_reg3.tfplan \
   -a plan #-destroy
 
 rover \
-  --impersonate-sp-from-keyvault-url https://ph_prefix-kv-co.vault.azure.net/ \
+  --impersonate-sp-from-keyvault-url https://hci01-kv-co.vault.azure.net/ \
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level2/connectivity/hub_reg3 \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_connectivity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate connectivity_hub_reg3.tfstate \
-  -env ph_environment \
+  -env DEV \
   -level level2 \
   -w tfstate \
   -p ${TF_DATA_DIR}/connectivity_hub_reg3.tfplan \

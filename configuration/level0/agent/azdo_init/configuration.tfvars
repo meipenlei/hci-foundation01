@@ -1,5 +1,5 @@
 azure_devops = {
-  url     = "ph_DevOpsOrg"
+  url     = "https://dev.azure.com/CopDev/"
   project = "ph_projectName"
   #use_msi = true
 

@@ -25,4 +25,5 @@ public
 **/*.output
 *output.json
 #secure.sh
+temp.sh
 /SuperModule

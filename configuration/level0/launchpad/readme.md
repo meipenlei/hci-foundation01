@@ -1,4 +1,4 @@
-# Launchpad - ph_prefix
+# Launchpad - hci01
 
 ## Pre-requisites
 
@@ -16,8 +16,8 @@ This scenario requires the following privileges:
 Elevate your credentials to the tenant root level to have enough privileges to create the management group hierarchy.
 
 ```bash
-# Login to the subscription Connectivity with the user ph_bootstrap_user_e-mail
-rover login -t ph_tenant_name
+# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+rover login -t dacoplab.onmicrosoft.com
 az rest --method post --url "/providers/Microsoft.Authorization/elevateAccess?api-version=2016-07-01"
 
 ```
@@ -25,17 +25,17 @@ az rest --method post --url "/providers/Microsoft.Authorization/elevateAccess?ap
 ### Launchpad
 
 ```bash
-# Login to the subscription Connectivity with the user ph_bootstrap_user_e-mail
-rover login -t ph_tenant_name
+# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+rover login -t dacoplab.onmicrosoft.com
 
 rover \
   -lz /tf/caf/landingzones/caf_launchpad \
   -var-folder /tf/caf/configuration/level0/launchpad \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_identity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate caf_launchpad.tfstate \
   -launchpad \
-  -env ph_environment \
+  -env DEV \
   -level level0 \
   -p ${TF_DATA_DIR}/caf_launchpad.tfplan \
   -a plan #-destroy
@@ -48,11 +48,11 @@ rover \
 rover \
   -lz /tf/caf/landingzones/caf_launchpad \
   -var-folder /tf/caf/configuration/level0/launchpad \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_identity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate caf_launchpad.tfstate \
   -launchpad \
-  -env ph_environment \
+  -env DEV \
   -level level0 \
   -p ${TF_DATA_DIR}/caf_launchpad.tfplan \
   -a apply

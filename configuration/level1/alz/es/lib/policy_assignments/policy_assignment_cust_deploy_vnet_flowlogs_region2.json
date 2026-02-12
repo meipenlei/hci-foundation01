@@ -11,7 +11,7 @@
         "value": "DeployIfNotExists"
       },
       "vnetRegion": {
-        "value": "ph_region2"
+        "value": "northeurope"
       },
       "flowAnalyticsEnabled": {
         "value": "true"
@@ -20,13 +20,13 @@
         "value": "60"
       },
       "logAnalytics": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/ph_prefix-log-logre1"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/hci01-log-logre1"
       },
       "retention": {
         "value": "2"
       },
       "storageAccountResourceId": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-nsgflogs2/providers/Microsoft.Storage/storageAccounts/ph_prefixstnsgflogs2"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-nsgflogs2/providers/Microsoft.Storage/storageAccounts/hci01stnsgflogs2"
       }
     },
     "policyDefinitionId": "${root_scope_resource_id}/providers/Microsoft.Authorization/policyDefinitions/CAF-Deploy-VNet-FlowLogs",

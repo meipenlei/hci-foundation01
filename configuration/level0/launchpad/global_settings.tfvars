@@ -12,7 +12,7 @@ inherit_tags = true
 random_length = 0
 # Set the prefix that will be added to all azure resources.
 # if not set and passthrough=false, the CAF module generates a random one.
-prefix = "ph_prefix"
+prefix = "hci01"
 suffix = ""
 
 # Default region. When not set to a resource it will use that value
@@ -20,12 +20,12 @@ default_region = "region1"
 
 # You can reference the regions by using region1, region2 or set your own keys
 regions = {
-  region1 = "ph_region1"
-  region2 = "ph_region2"
+  region1 = "westeurope"
+  region2 = "northeurope"
 }
 
 # Enviroment setting
-environment = "ph_environment"
+environment = "DEV"
 
 # Rover will adjust some tags to enable the discovery of the launchpad.
 launchpad_key_names = {

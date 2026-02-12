@@ -76,7 +76,7 @@ snap:
   - snap install kubectl --classic
 runcmd:
 - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-- docker pull ph_rover_version
+- docker pull meipenleikap/dt1aztfmod:1.12.2-2506.2617
 - curl -L "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64" -o /usr/bin/jq
 - chmod +x /usr/bin/jq
 bootcmd:

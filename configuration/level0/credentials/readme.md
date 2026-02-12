@@ -3,17 +3,17 @@
 
 ```bash
 # For manual bootstrap:
-# Login to the subscription Connectivity with the user ph_bootstrap_user_e-mail
-rover login -t ph_tenant_name
+# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+rover login -t dacoplab.onmicrosoft.com
 
 rover \
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level0/credentials \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_identity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate launchpad_credentials.tfstate \
   -launchpad \
-  -env ph_environment \
+  -env DEV \
   -level level0 \
   -p ${TF_DATA_DIR}/launchpad_credentials.tfplan \
   -a plan #-destroy
@@ -22,16 +22,16 @@ rover \
 
 ```bash
 # After a successful deployment add the impersonation part for ongoing deployments to update the credentials later, when they are expired
-#  --impersonate-sp-from-keyvault-url https://ph_prefix-kv-id.vault.azure.net/ \
+#  --impersonate-sp-from-keyvault-url https://hci01-kv-id.vault.azure.net/ \
 
 rover \
   -lz /tf/caf/landingzones/caf_solution \
   -var-folder /tf/caf/configuration/level0/credentials \
-  -tfstate_subscription_id ph_identity_subscription_id \
-  -target_subscription ph_identity_subscription_id \
+  -tfstate_subscription_id f371e124-4b06-46ea-9d63-f51d48d76e64 \
+  -target_subscription f371e124-4b06-46ea-9d63-f51d48d76e64 \
   -tfstate launchpad_credentials.tfstate \
   -launchpad \
-  -env ph_environment \
+  -env DEV \
   -level level0 \
   -p ${TF_DATA_DIR}/launchpad_credentials.tfplan \
   -a apply

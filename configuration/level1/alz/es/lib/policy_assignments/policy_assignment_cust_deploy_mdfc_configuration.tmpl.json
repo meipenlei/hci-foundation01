@@ -19,13 +19,13 @@
     ],
     "parameters": {
       "emailSecurityContact": {
-        "value": "ph_bootstrap_user_e-mail"
+        "value": "admin@cloudenabler.onmicrosoft.com"
       },
       "logAnalytics": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/ph_prefix-log-logre1"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/hci01-log-logre1"
       },
       "ascExportResourceGroupName": {
-        "value": "ph_prefix-rg-asc-export"
+        "value": "hci01-rg-asc-export"
       },
       "ascExportResourceGroupLocation": {
         "value": "${default_location}"

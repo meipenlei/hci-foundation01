@@ -22,7 +22,7 @@ parameters:
   - name: environment
     displayName: Environment Name
     type: string
-    default: ph_environment
+    default: DEV
 
   - name: wlf_service_connection
     displayName: Workload Federation Service Connection Name
@@ -32,7 +32,7 @@ parameters:
   - name: ROVER_IMAGE
     displayName: Image for Rover
     type: string
-    default: ph_rover_version
+    default: meipenleikap/dt1aztfmod:1.12.2-2506.2617
 
 variables:
   - group: LandingZoneRepo

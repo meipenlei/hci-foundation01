@@ -20,7 +20,7 @@
     ],
     "parameters": {
       "dcrResourceId": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.Insights/dataCollectionRules/ph_prefix-dcr-ct"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.Insights/dataCollectionRules/hci01-dcr-ct"
       },
       "effect": {
         "value": "DeployIfNotExists"

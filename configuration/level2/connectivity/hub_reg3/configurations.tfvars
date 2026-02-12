@@ -16,7 +16,7 @@ global_settings = {
   random_length = 0
   # Set the prefix that will be added to all azure resources.
   # if not set and passthrough=false, the CAF module generates a random one.
-  prefix = "ph_prefix"
+  prefix = "hci01"
   suffix = ""
 
   # Default region. When not set to a resource it will use that value
@@ -25,13 +25,13 @@ global_settings = {
   # You can reference the regions by using region1, region2 or set your own keys
 
   regions = {
-    region1 = "ph_region1"
-    region2 = "ph_region2"
+    region1 = "westeurope"
+    region2 = "northeurope"
     region3 = "germanywestcentral"
   }
 
   # Enviroment setting
-  environment = "ph_environment"
+  environment = "DEV"
 
   # if boot_diagnostics_storage_account_key is not defined, but global_settings.resource_defaults.virtual_machines.use_azmanaged_storage_for_boot_diagnostics is true, boot diagnostics will be put on azure managed storage
   use_azmanaged_storage_for_boot_diagnostics = "true"

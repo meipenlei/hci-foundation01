@@ -2,10 +2,10 @@ azuread_groups_membership = {
   caf_platform_maintainers = {
     members = {
       user_principal_names = [
-        "ph_bootstrap_user_e-mail"
+        "admin@cloudenabler.onmicrosoft.com"
       ],
       object_ids = [
-        "ph_bootstrapper_object_id"
+        "6455e5c3-d602-41cd-84a3-e903e45fa536"
       ]
     }
     azuread_service_principals = {

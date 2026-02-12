@@ -14,21 +14,21 @@ subscriptions = {
   identity = {
     name            = "Identity"
     create_alias    = false
-    subscription_id = "ph_identity_subscription_id"
+    subscription_id = "f371e124-4b06-46ea-9d63-f51d48d76e64"
   }
   connectivity = {
     name            = "Connectivity"
     create_alias    = false
-    subscription_id = "ph_connectivity_subscription_id"
+    subscription_id = "f371e124-4b06-46ea-9d63-f51d48d76e64"
   }
   management = {
     name            = "Management"
     create_alias    = false
-    subscription_id = "ph_management_subscription_id"
+    subscription_id = "f371e124-4b06-46ea-9d63-f51d48d76e64"
   }
   application001 = {
     name            = "Application Landing Zone 001"
     create_alias    = false
-    subscription_id = "ph_app001_subscription_id"
+    subscription_id = "f371e124-4b06-46ea-9d63-f51d48d76e64"
   }
 }

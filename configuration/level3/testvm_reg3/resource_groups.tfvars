@@ -3,9 +3,9 @@ resource_groups = {
     name   = "testvm"
     region = "region3"
     tags = {
-      solution_topic   = "ph_customer_topic"
-      cost_center      = "ph_cost_center_level3"
-      cost_responsible = "ph_cost_responsible_level3"
+      solution_topic   = "hci01"
+      cost_center      = "Platforms"
+      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
     }
   }
 }

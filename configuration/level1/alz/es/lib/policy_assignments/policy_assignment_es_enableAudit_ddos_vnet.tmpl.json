@@ -15,7 +15,7 @@
     "enforcementMode": "Default",    
     "parameters": {
       "ddosPlan": {
-        "value": "/subscriptions/ph_management_subscription_id/resourceGroups/ph_prefix-rg-mgmt/providers/Microsoft.Network/ddosProtectionPlans/ph_prefix-ddos"
+        "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.Network/ddosProtectionPlans/hci01-ddos"
       },
       "effect": {
         "value": "Audit"

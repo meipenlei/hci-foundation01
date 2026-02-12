@@ -24,7 +24,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level0"
     }
@@ -38,7 +38,7 @@ storage_accounts = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }
@@ -69,7 +69,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level1"
     }
@@ -83,7 +83,7 @@ storage_accounts = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }
@@ -114,7 +114,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level2"
     }
@@ -128,7 +128,7 @@ storage_accounts = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }
@@ -159,7 +159,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level3"
     }
@@ -173,7 +173,7 @@ storage_accounts = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }
@@ -204,7 +204,7 @@ storage_accounts = {
     tags = {
       # Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
-      caf_environment = "ph_environment"
+      caf_environment = "DEV"
       caf_launchpad   = "launchpad"
       caf_tfstate     = "level4"
     }
@@ -218,7 +218,7 @@ storage_accounts = {
         # }
         #add multiple subnets by extending this block. You can reference remote subnets by using remote_subnet_id
         subnet1 = {
-          remote_subnet_id = "/subscriptions/ph_identity_subscription_id/resourceGroups/ph_prefix-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/ph_prefix-vnet-mdp/subnets/ph_prefix-snet-frontend"
+          remote_subnet_id = "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-self-hosted-level0/providers/Microsoft.Network/virtualNetworks/hci01-vnet-mdp/subnets/hci01-snet-frontend"
         }
       }
     }

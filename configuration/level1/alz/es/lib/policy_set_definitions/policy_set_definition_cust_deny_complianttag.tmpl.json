@@ -17,21 +17,21 @@
         "metadata": {
           "description": "required value for tag"
         },
-        "defaultValue": "ph_prefix-missing"
+        "defaultValue": "hci01-missing"
       },
       "compliantTag02": {
         "type": "String",
         "metadata": {
           "description": "required value for tag"
         },
-        "defaultValue": "ph_prefix-missing"
+        "defaultValue": "hci01-missing"
       },
       "compliantTag03": {
         "type": "String",
         "metadata": {
           "description": "required value for tag"
         },
-        "defaultValue": "ph_prefix-missing"
+        "defaultValue": "hci01-missing"
       }
     },
     "policyDefinitions": [
