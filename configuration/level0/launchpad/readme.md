@@ -16,7 +16,7 @@ This scenario requires the following privileges:
 Elevate your credentials to the tenant root level to have enough privileges to create the management group hierarchy.
 
 ```bash
-# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+# Login to the subscription Connectivity with the user mjacob@cloudenabler.onmicrosoft.com
 rover login -t dacoplab.onmicrosoft.com
 az rest --method post --url "/providers/Microsoft.Authorization/elevateAccess?api-version=2016-07-01"
 
@@ -25,7 +25,7 @@ az rest --method post --url "/providers/Microsoft.Authorization/elevateAccess?ap
 ### Launchpad
 
 ```bash
-# Login to the subscription Connectivity with the user admin@cloudenabler.onmicrosoft.com
+# Login to the subscription Connectivity with the user mjacob@cloudenabler.onmicrosoft.com
 rover login -t dacoplab.onmicrosoft.com
 
 rover \

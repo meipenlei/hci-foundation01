@@ -85,12 +85,12 @@ virtual_machines = {
 
 # Create a puplic ip address
 public_ip_addresses = {
- dc_pip1 = {
-   name                    = "dc2"
-   resource_group_key      = "rg1"
-   sku                     = "Standard"
-   allocation_method       = "Static"
-   ip_version              = "IPv4"
-   idle_timeout_in_minutes = "4"
- }
+  dc_pip1 = {
+    name                    = "dc2"
+    resource_group_key      = "rg1"
+    sku                     = "Standard"
+    allocation_method       = "Static"
+    ip_version              = "IPv4"
+    idle_timeout_in_minutes = "4"
+  }
 }

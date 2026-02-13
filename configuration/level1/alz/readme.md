@@ -7,7 +7,7 @@ This directory contains the Enterprise Scale (ES) configuration for Azure Landin
 The Enterprise Scale configuration deploys a comprehensive management group structure:
 
 ```
-ph_optional_root_parent_id (Root Parent)
+root (Root Parent)
 └── hci01 (https://dev.azure.com/CopDev/ Any SubRoot)
     ├── hci01-platform
     │   ├── hci01-connectivity
@@ -98,7 +98,7 @@ This Enterprise Scale implementation is designed to support **both greenfield an
 ### Root Configuration
 - **Root ID**: `hci01`
 - **Display Name**: `https://dev.azure.com/CopDev/ Any SubRoot`
-- **Parent ID**: `ph_optional_root_parent_id`
+- **Parent ID**: `root`
 - **Library Path**: `/tf/caf/configuration/level1/alz/es/lib`
 
 ### Enabled Landing Zones

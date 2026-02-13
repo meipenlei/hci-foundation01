@@ -5,7 +5,7 @@ resource_groups = {
     tags = {
       solution_topic   = "connectivity"
       cost_center      = "SharedServices"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
 }

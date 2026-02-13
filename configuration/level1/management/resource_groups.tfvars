@@ -5,7 +5,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Governance"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
   nsgflogs1 = {
@@ -14,7 +14,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Governance"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
   nsgflogs2 = {
@@ -23,7 +23,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Governance"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
 
@@ -33,7 +33,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Governance"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
 }

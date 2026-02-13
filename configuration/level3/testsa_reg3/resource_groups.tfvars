@@ -5,7 +5,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Platforms"
-      cost_responsible = "admin@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
     }
   }
 }
