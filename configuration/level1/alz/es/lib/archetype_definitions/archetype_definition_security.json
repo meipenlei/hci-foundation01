@@ -1,7 +1,11 @@
 {
-  "custom": {
+  "security": {
     "policy_assignments": [
-      "Deploy-VM-Backup"
+      "Audit-ResourceRGLocation",
+      "Deny-Public-Endpoints",
+      "Deny-IP-forwarding",
+      "Deny-Public-IP-On-NIC",
+      "Enforce-Encrypt-CMK0"
     ],
     "policy_definitions": [],
     "policy_set_definitions": [],

@@ -1,0 +1,18 @@
+{
+  "confidential-corp": {
+    "policy_assignments": [
+      "Audit-ResourceRGLocation",
+      "Deny-Public-Endpoints",
+      "Deny-IP-forwarding",
+      "Deny-Public-IP-On-NIC",
+      "Enforce-Encrypt-CMK0"
+    ],
+    "policy_definitions": [],
+    "policy_set_definitions": [],
+    "role_definitions": [],
+    "archetype_config": {
+      "parameters": {},
+      "access_control": {}
+    }
+  }
+}
