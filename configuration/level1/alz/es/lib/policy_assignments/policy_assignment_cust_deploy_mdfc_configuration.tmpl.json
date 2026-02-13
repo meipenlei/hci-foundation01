@@ -19,7 +19,7 @@
     ],
     "parameters": {
       "emailSecurityContact": {
-        "value": "mjacob@cloudenabler.onmicrosoft.com"
+        "value": "mjacob@dacoplab.onmicrosoft.com"
       },
       "logAnalytics": {
         "value": "/subscriptions/f371e124-4b06-46ea-9d63-f51d48d76e64/resourceGroups/hci01-rg-mgmt/providers/Microsoft.OperationalInsights/workspaces/hci01-log-logre1"

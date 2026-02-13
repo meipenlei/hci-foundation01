@@ -3,7 +3,7 @@
 
 ```bash
 # For manual bootstrap:
-# Login to the subscription Connectivity with the user mjacob@cloudenabler.onmicrosoft.com
+# Login to the subscription Connectivity with the user mjacob@dacoplab.onmicrosoft.com
 rover login -t dacoplab.onmicrosoft.com
 
 rover \

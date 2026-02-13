@@ -37,13 +37,13 @@ TODO: Give a short introduction of your project. Let this section explain the ob
 |Tag                            | SharedServices         | "cost_center      = ""SharedServices"""      | Used for Standard Tagging                                            |
 |Tag                            | Platforms         | "cost_center      = ""Platforms"""           | Used for Standard Tagging                                            |
 |Tag                            | Business         | "cost_center      = ""Business"""            | Used for Standard Tagging                                            |
-|Tag                            | mjacob@cloudenabler.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
-|Tag                            | mjacob@cloudenabler.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
-|Tag                            | mjacob@cloudenabler.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
-|Tag                            | mjacob@cloudenabler.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
-|Tag                            | mjacob@cloudenabler.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
-|Bootstrap User Email Address   | mjacob@cloudenabler.onmicrosoft.com      | <mjacob@cloudenabler.onmicrosoft.com>         | Specify e.g. user admin account                                      |
-|MSI Object ID (for automation) | 6455e5c3-d602-41cd-84a3-e903e45fa536   | 673a4999-622b-xxxx-b1be-405271a5b06c         | Specify the bootstrap MSI object id (dont add an object id of a user from mjacob@cloudenabler.onmicrosoft.com, this will result in duplicate error!) |
+|Tag                            | mjacob@dacoplab.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
+|Tag                            | mjacob@dacoplab.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
+|Tag                            | mjacob@dacoplab.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
+|Tag                            | mjacob@dacoplab.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
+|Tag                            | mjacob@dacoplab.onmicrosoft.com    | "cost_responsible = ""<ceo@customer.com>"""  | Used for Standard Tagging                                            |
+|Bootstrap User Email Address   | mjacob@dacoplab.onmicrosoft.com      | <mjacob@dacoplab.onmicrosoft.com>         | Specify e.g. user admin account                                      |
+|MSI Object ID (for automation) | 6455e5c3-d602-41cd-84a3-e903e45fa536   | 673a4999-622b-xxxx-b1be-405271a5b06c         | Specify the bootstrap MSI object id (dont add an object id of a user from mjacob@dacoplab.onmicrosoft.com, this will result in duplicate error!) |
 |Region1                        | westeurope                    | westeurope                                   |                                                                      |
 |Region2                        | northeurope                    | northeurope                                  |                                                                      |
 |Root Management Group ID       | hci01                    | cetf1                                        | Usually the same like the prefix                                     |

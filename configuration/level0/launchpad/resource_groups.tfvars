@@ -5,7 +5,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "IT"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
   level1 = {
@@ -14,7 +14,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Governance"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
   level2 = {
@@ -23,7 +23,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "SharedServices"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
   level3 = {
@@ -32,7 +32,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Platforms"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
   level4 = {
@@ -41,7 +41,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "Business"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
   sp_credentials = {
@@ -50,7 +50,7 @@ resource_groups = {
     tags = {
       solution_topic   = "hci01"
       cost_center      = "IT"
-      cost_responsible = "mjacob@cloudenabler.onmicrosoft.com"
+      cost_responsible = "mjacob@dacoplab.onmicrosoft.com"
     }
   }
 }
