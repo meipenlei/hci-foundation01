@@ -50,13 +50,24 @@ variable "landingzone" {
   }
 }
 
-
 variable "user_type" {}
-variable "tenant_id" {}
+
+variable "subscription_id" {
+  type        = string
+  description = "Subscription ID for the connectivity resources"
+}
+
+variable "tenant_id" {
+  type        = string
+  description = "Tenant ID for the connectivity resources"
+}
+
 variable "rover_version" {}
+
 variable "logged_user_objectId" {
   default = null
 }
+
 variable "tags" {
   type    = map(any)
   default = {}
