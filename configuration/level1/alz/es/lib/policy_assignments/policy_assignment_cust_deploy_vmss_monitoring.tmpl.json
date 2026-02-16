@@ -35,7 +35,7 @@
         "value": true
       },
       "scopeToSupportedImages": {
-        "value": false
+        "value": true
       }
     },
     "scope": "${current_scope_resource_id}",
