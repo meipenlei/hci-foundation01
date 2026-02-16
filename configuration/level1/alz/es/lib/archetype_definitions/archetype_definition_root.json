@@ -33,6 +33,8 @@
       "CAF-Deny-Subnet-Without-Nsg",
       "CAF-Deploy-VNet-FlowLogs",
       "CAF-Deny-Subnet-Without-Udr",
+      "CAF-Deploy-SOV-GLOBAL",
+      "CAF-Deploy-SOV-CONF",
       "Append-AppService-httpsonly",
       "Append-AppService-latestTLS",
       "Append-KV-SoftDelete",

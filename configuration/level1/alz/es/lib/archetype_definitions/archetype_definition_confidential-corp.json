@@ -1,6 +1,8 @@
 {
   "confidential-corp": {
     "policy_assignments": [
+      "CAF-Deploy-SOV-GLOBAL",
+      "CAF-Deploy-SOV-CONF",
       "Audit-ResourceRGLocation",
       "Deny-Public-Endpoints",
       "Deny-IP-forwarding",
