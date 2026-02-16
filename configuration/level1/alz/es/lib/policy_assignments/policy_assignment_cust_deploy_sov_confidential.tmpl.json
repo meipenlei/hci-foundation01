@@ -20,14 +20,17 @@
       "effect": {
         "value": "Audit"
       },
-      "allowedResourceTypes": {
-        "value": []
-      },
       "allowedVirtualMachineSKUs": {
-        "value": []
+        "value": [
+          "Standard_F2s_v2",
+          "Standard_K8S3_v1"
+        ]
       },
       "listOfAllowedLocations": {
-        "value": []
+        "value": [
+          "westeurope",
+          "germanywestcentral"
+        ]
       }
     }
   }
