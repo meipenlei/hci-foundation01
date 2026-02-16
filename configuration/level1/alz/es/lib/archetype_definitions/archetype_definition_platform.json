@@ -1,6 +1,8 @@
 {
   "es_platform": {
     "policy_assignments": [
+      "CAF-Deploy-SOV-GLOBAL",
+      "CAF-Deploy-SOV-CONF",
       "DenyAction-DeleteUAMIAMA",
       "CAF-Deploy-VM-Monitoring",
 			"CAF-Depl-VM-ChangeTrack",
