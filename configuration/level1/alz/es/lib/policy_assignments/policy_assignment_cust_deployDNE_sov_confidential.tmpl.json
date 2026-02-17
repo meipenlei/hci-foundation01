@@ -34,6 +34,7 @@
       },
       "allowedResourceTypes": {
         "value": [
+          "microsoft.automation/automationaccounts",
           "Microsoft.Attestation/attestationProviders",
           "Microsoft.Attestation/attestationProviders/privateEndpointConnections",
           "Microsoft.Compute/availabilitySets",
