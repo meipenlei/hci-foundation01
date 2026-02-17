@@ -12,7 +12,7 @@
     "displayName": "Sovereignty Baseline - Confidential Policies",
     "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/03de05a4-c324-4ccd-882f-a814ea8ab9ea",
     "definitionVersion": "1.2.*",
-    "enforcementMode": "Default",
+    "enforcementMode": "DoNotEnforce",
     "nonComplianceMessages": [],
     "scope": "${current_scope_resource_id}",
     "notScopes": [],
