@@ -23,7 +23,8 @@
       "allowedVirtualMachineSKUs": {
         "value": [
           "Standard_F2s_v2",
-          "Standard_K8S3_v1"
+          "Standard_K8S3_v1",
+          "Standard_A4_v2"
         ]
       },
       "listOfAllowedLocations": {
