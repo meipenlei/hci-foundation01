@@ -57,7 +57,8 @@ ENV SSH_PASSWD=${SSH_PASSWD} \
 WORKDIR /tf/rover
 COPY ./scripts/.kubectl_aliases .
 COPY ./scripts/zsh-autosuggestions.zsh .
-    # installation common tools
+
+# installation common tools
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     apt-transport-https \
@@ -97,6 +98,7 @@ RUN apt-get update && \
     echo "Creating ${USERNAME} user..." && \
     groupadd docker && \
     useradd --uid $USER_UID -m -G docker ${USERNAME}  && \
+    usermod -aG sudo ${USERNAME} && \
     #
     # Set the locale
     locale-gen en_US.UTF-8 && \
@@ -329,8 +331,9 @@ RUN apt-get update && \
     chown -R ${USER_UID}:${USER_GID} /home/${USERNAME} /tf/rover /tf/caf /tf/logs && \
     chmod 777 -R /home/${USERNAME} /tf/caf /tf/rover && \
     chmod 700 /home/${USERNAME}/.ssh && \
-    echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} && \
+    printf '%s\n' "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
     chmod 0440 /etc/sudoers.d/${USERNAME} && \
+    visudo -cf /etc/sudoers && \
     # for non-root user
     mkdir /commandhistory && \
     touch /commandhistory/.bash_history && \
@@ -352,6 +355,12 @@ RUN apt-get update && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
     find . | grep -E '(__pycache__|\.pyc|\.pyo$)' | xargs rm -rf || true
+
+# Ensure rover/terraform cache dirs are writable by vscode (fixes /tf/cache permission denied)
+RUN mkdir -p /tf/cache && \
+    chown -R ${USER_UID}:${USER_GID} /tf/cache && \
+    chmod 0775 /tf/cache
+    
 #
 # Switch to non-root ${USERNAME} context
 #
@@ -370,8 +379,8 @@ RUN echo "Setting up OMZ environment" && \
     echo "DISABLE_UNTRACKED_FILES_DIRTY=\"true\"" >> /home/${USERNAME}/.zshrc && \
     echo "alias rover=/tf/rover/rover.sh" >> /home/${USERNAME}/.bashrc && \
     echo "alias rover=/tf/rover/rover.sh" >> /home/${USERNAME}/.zshrc && \
-    echo "alias t=/usr/bin/terraform" >> /home/${USERNAME}/.bashrc && \
-    echo "alias t=/usr/bin/terraform" >> /home/${USERNAME}/.zshrc && \
+    echo "alias t=/usr/local/bin/terraform" >> /home/${USERNAME}/.bashrc && \
+    echo "alias t=/usr/local/bin/terraform" >> /home/${USERNAME}/.zshrc && \
     echo "alias k=/usr/bin/kubectl" >> /home/${USERNAME}/.zshrc && \
     echo "alias k=/usr/bin/kubectl" >> /home/${USERNAME}/.bashrc && \
     echo "cd /tf/caf || true" >> /home/${USERNAME}/.bashrc && \
@@ -388,24 +397,34 @@ ARG versionTerraform \
 
 ENV versionRover=${versionRover} \
     versionTerraform=${versionTerraform}
-#
-# Install Terraform
-#
-# Keeping this method to support alpha build installations
 
+USER root
+
+# Ensure passwordless sudo exists in the *final* image (prevents prompt in postCreateCommand)
+RUN mkdir -p /etc/sudoers.d && \
+    printf '%s\n' "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME} && \
+    visudo -cf /etc/sudoers && \
+    test -f /etc/sudoers.d/${USERNAME}
+    
+# Install Terraform
 RUN echo "Set rover version to ${versionRover}..." && echo "Installing Terraform ${versionTerraform}..." && \
     curl -sSL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${versionTerraform}/terraform_${versionTerraform}_${TARGETOS}_${TARGETARCH}.zip" 2>&1 && \
-    sudo unzip -o -d /usr/bin /tmp/terraform.zip && \
-    sudo chmod +x /usr/bin/terraform && \
+    mkdir -p /tmp/terraform-unzip && \
+    unzip -o /tmp/terraform.zip -d /tmp/terraform-unzip && \
+    install -m 0755 /tmp/terraform-unzip/terraform /usr/local/bin/terraform && \
+    rm -rf /tmp/terraform.zip /tmp/terraform-unzip && \
     mkdir -p "/home/${USERNAME}/.terraform.cache/plugin-cache" && \
-    rm /tmp/terraform.zip && \
-    #
-    echo "Set rover version to ${versionRover}..." && \
+    chown -R "${USERNAME}:${USERNAME}" "/home/${USERNAME}/.terraform.cache" && \
     echo "${versionRover}" > /tf/rover/version.txt
 
-RUN az config set core.login_experience_v2=false
+COPY --chown=${USERNAME}:${USERNAME} ./scripts/rover.sh ./scripts/tfstate.sh ./scripts/functions.sh ./scripts/remote.sh ./scripts/parse_command.sh ./scripts/banner.sh ./scripts/clone.sh ./scripts/walkthrough.sh ./scripts/sshd.sh ./scripts/backend.hcl.tf ./scripts/backend.azurerm.tf ./scripts/ci.sh ./scripts/cd.sh ./scripts/task.sh ./scripts/symphony_yaml.sh ./scripts/test_runner.sh ./
+COPY --chown=${USERNAME}:${USERNAME} ./scripts/ci_tasks/* ./ci_tasks/
+COPY --chown=${USERNAME}:${USERNAME} ./scripts/lib/* ./lib/
+COPY --chown=${USERNAME}:${USERNAME} ./scripts/tfcloud/* ./tfcloud/
 
-COPY ./scripts/rover.sh ./scripts/tfstate.sh ./scripts/functions.sh ./scripts/remote.sh ./scripts/parse_command.sh ./scripts/banner.sh ./scripts/clone.sh ./scripts/walkthrough.sh ./scripts/sshd.sh ./scripts/backend.hcl.tf ./scripts/backend.azurerm.tf ./scripts/ci.sh ./scripts/cd.sh ./scripts/task.sh ./scripts/symphony_yaml.sh ./scripts/test_runner.sh ./
-COPY ./scripts/ci_tasks/* ./ci_tasks/
-COPY ./scripts/lib/* ./lib/
-COPY ./scripts/tfcloud/* ./tfcloud/
+RUN chmod 0755 /tf/rover/*.sh && \
+    chmod 0755 /tf/rover/rover.sh
+
+USER ${USERNAME}
+RUN az config set core.login_experience_v2=false

@@ -14,8 +14,8 @@
     // "runServices": [],
     // Uncomment this like if you want to keep your containers running after VS Code shuts down.
     // "shutdownAction": "none",
-    "postCreateCommand": "bash ./.devcontainer/setup.sh",
-    "postStartCommand": "bash ./.devcontainer/setup.sh",
+    "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/setup.sh",
+    "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/setup.sh",
     // Add the IDs of extensions you want installed when the container is created in the array below.
     // Use 'settings' to set *default* container specific settings.json values on container create.
     // You can edit these settings after create using File > Preferences > Settings > Remote.

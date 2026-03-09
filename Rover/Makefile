@@ -26,3 +26,5 @@ alpha:
 custom:
 	echo ${arch}
 	@bash "$(CURDIR)/scripts/build_image.sh" "custom" ${arch} ${agent}
+ghcr:
+	@bash "$(CURDIR)/scripts/build_image.sh" "ghcr" ${arch} ${agent}

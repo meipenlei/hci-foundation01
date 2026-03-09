@@ -39,13 +39,17 @@ get_arch() {
 set -ETe
 trap 'error ${LINENO}' ERR 1 2 3 6
 
-./scripts/pre_requisites.sh
+# Read CLI args (Makefile passes: strategy, arch, agent)
+export strategy="${1:-}"
+arch="${2:-}"
+agent="${3:-}"
+
+bash ./scripts/pre_requisites.sh
 
 params=$@
 build_date=date
 tag_date_preview=$(${build_date} +"%g%m.%d%H%M")
 tag_date_release=$(${build_date} +"%g%m.%d%H")
-export strategy=${1}
 
 get_arch ${arch}
 echo "OS: $os"
@@ -112,6 +116,16 @@ function build_base_rover_image {
             export rover="${rover_base}:${tag}"
             tag_strategy=""
             ;;
+        "ghcr")
+            # GHCR image names must be lowercase
+            # GHCR_OWNER should be set by the workflow (recommended), fallback to GITHUB_REPOSITORY_OWNER if present.
+            owner="${GHCR_OWNER:-${GITHUB_REPOSITORY_OWNER}}"
+            registry="ghcr.io/${owner}/"
+            tag=${versionTerraform}-${tag_date_release}
+            rover_base="${registry}rover-ghcr"
+            export rover="${rover_base}:${tag}"
+            tag_strategy="ghcr-"
+            ;;
     esac
 
     echo "Creating version ${rover}"
@@ -138,7 +152,7 @@ function build_base_rover_image {
             versionRover="${rover_base}:${tag}" \
             versionTerraform=${versionTerraform} \
             tag="${rover}" \
-            docker buildx bake \
+            docker buildx bake --allow=fs=/tmp \
                 -f docker-bake.hcl \
                 -f docker-bake.override.hcl \
                 --set *.platform=${os}/${architecture} \
@@ -158,13 +172,25 @@ function build_base_rover_image {
             # Pull from in-memory local registry to local docker images
             docker pull --platform ${os}/${architecture} ${rover}
             ;;
+        "ghcr")
+            echo "Building rover image and pushing to registry"
+            registry="${registry}" \
+            versionRover="${rover_base}:${tag}" \
+            versionTerraform=${versionTerraform} \
+            tag="${rover}" \
+            docker buildx bake --allow=fs=/tmp \
+                -f docker-bake.hcl \
+                -f docker-bake.override.hcl \
+                --set *.platform=${os}/${architecture} \
+                --push rover_registry
+            ;;
         *)
             echo "Building rover image and pushing to Docker Hub"
             registry="${registry}" \
             versionRover="${rover_base}:${tag}" \
             versionTerraform=${versionTerraform} \
             tag="${rover}" \
-            docker buildx bake \
+            docker buildx bake --allow=fs=/tmp \
                 -f docker-bake.hcl \
                 -f docker-bake.override.hcl \
                 --push rover_registry
